@@ -1,34 +1,28 @@
-## Sesión 7: Integración de Thymeleaf y Spring Boot
+## Sesión 7: Monitoreo y logs con Log4J y LogBack
 
 <img src=".github/assets/img/thymeleaf.png" align="right" height="120" hspace="10">
 <div style="text-align: justify;">
 
 ### 1. Objetivos :dart:
 
-- Integrar Thymeleaf como motor de generación de vistas en una aplicación desarrollada usando Spring Boot.
-- Mostrar mensajes estáticos en una página web.
-- Mostrar mensajes dinámicos en una página web.
-- Procesar formularios.
+- Aprender como loggear mensajes con Java
+- Conocer diferentes herramientas de Log 
+- Hacer un comparativo de las herramientas de Loggeo
 
 
 ### 2. Contenido :blue_book:
 
-Thymeleaf es un motor de plantillas Java para aplicaciones, tanto web como standalone, construido sobre estándares HTML5, por lo que es compatible con la inmensa mayoría de navegadores. Entre sus principales características cabe destacar su flexibilidad y su alto rendimiento que, junto con su facilidad de aprendizaje y su poco intrusismo en el marcado lo convierten en una alternativa real a otras opciones más populares como JSP.
+El log es una poderosa ayuda para comprender y depurar el comportamiento en tiempo de ejecución del programa. Los logs capturan y conservan los datos importantes y los ponen a disposición para su análisis en cualquier momento.
 
-En este módulo aprenderemos:
-
-- Integrar Thymeleaf como motor de generación de vistas en una aplicación desarrollada usando Spring Boot.
-- Generar contenido estático.
-- Generar contenido dinámico.
-- Manejo de formularios.
+Esta sesión analiza los marcos de log de Java más populares, Log4j2 y Logback, junto con su predecesor Log4j, y aborda brevemente SLF4J, una fachada de logs que proporciona una interfaz común para diferentes marcos de logs.
 
 ---
 
-<img src=".github/assets/img/html.jpg" align="right" height="90" hspace="10">
+<img src="https://coralogix.com/wp-content/uploads/2018/04/Coralogix-log4j-integration.jpg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: Integración de Thymeleaf y Spring Boot</ins>
+#### <ins>Tema 1: Log4J2</ins>
 
-Thymeleaf como motor de plantillas se integra de una forma perfecta con los controladores de Spring MVC. En el primer tema aprenderemos cómo realizar esta integración y a desplegar un mensaje estático en un HTML generado en el [primer ejemplo](./Ejemplo-01), mientras que en el [primer reto](./Reto-01) tendrás que modificar este mensaje para que sea dinámico.
+Primero comenzaremos con una de las herramientas mas populares para el proceso de log de una aplicación, esta herramienta es Log4J2 en el ejemplo se explica su configuración y su uso mediante una sencilla aplicación.
 
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
@@ -38,11 +32,12 @@ Thymeleaf como motor de plantillas se integra de una forma perfecta con los cont
 
 <img src=".github/assets/img/form.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 2: Manejo de formularios.</ins>
+#### <ins>Tema 2: LogBack.</ins>
 
-La forma más habitual de obtener información de un usuario es a través de un formulario, el cual es un conjunto de campos agrupados a través de los cuales solicitamos esta información. En el [segundo ejemplo](./Ejemplo-02) aprenderemos cómo generar un formulario y enviar su información a un controlador para que sea procesada.
+Logback es uno de los marcos de log más utilizados en la comunidad Java. Es un reemplazo de su predecesor, Log4j. Logback ofrece una implementación más rápida, brinda más opciones de configuración y más flexibilidad para archivar archivos de log antiguos.
 
 - [**`EJEMPLO 2`**](./Ejemplo-02)
+- [**`Reto 2`**](./Reto-02)
 
 ---
 
@@ -53,8 +48,6 @@ La forma más habitual de obtener información de un usuario es a través de un for
 Aunque un formulario esté bien diseñado, podemos esperar que habrá usuarios que introducirán información incorrecta, ya sea de forma accidental o buscando causar algún daño. Es por eso que la validación de los datos y sus formatos dentro de un formulario es muy importante. En el [ejemplo 3](./Ejemplo-03) aprenderemos cómo realizar una validación básica de un formulario y en el [segundo reto](./Reto-02) deberás además mostrar un mensaje de error cuando ocurra algún problema de validación. 
 
 - [**`EJEMPLO 3`**](./Ejemplo-03)
-- [**`Reto 2`**](./Reto-02)
-
 ---
 
 ### 3. Postwork :memo:

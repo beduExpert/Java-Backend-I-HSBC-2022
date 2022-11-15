@@ -1,155 +1,95 @@
-## Ejemplo 02: Manejo de formularios
+# Ejemplo 02: LogBack
 
-### OBJETIVO
+## OBJETIVO
 
-- Capturar información del usuario a través de un formulario que será enviado al servidor para procesar su información.
+- Utilizar LogBack en el proceso de logs
 
 
-### DESARROLLO
+## DESARROLLO
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+En este ejemplo, presentaremos la arquitectura de Logback y examinaremos cómo podemos usarla para mejorar nuestras aplicaciones. Para esto creamos un nuevo proyecto que utilice **Maven** en **intelliJ**.
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+### Arquitectura
 
-![](img/img_01.png)
+La arquitectura Logback se compone de tres clases: **Logger** , **Appender** y **Layout** .
 
-En la siguiente ventana elige Spring Web y Thymelead como dependencias del proyecto:
+- Un **Logger** es un contexto para mensajes de log. Esta es la clase con la que interactúan las aplicaciones para crear mensajes de logs.
 
-![imagen](img/img_02.png)
- 
-Presiona el botón "Finish".
+- Los **Appenders** colocan los mensajes de logs en sus destinos finales. Un **Logger** puede tener más de un **Appender** . Generalmente pensamos en **Appenders** como adjuntos a archivos de texto, pero **Logback** es mucho más potente que eso.
 
-IntelliJ creará de forma automática un directorio llamdo "templates". Ahí es donde poderemos poner las plantillas que se usarán para la generación de las páginas HTML de nuestros proyectos. Dentro de este directorio crea una nueva página html llamada `index.html` y otra página llamada "registroExitoso.html".
+- El **Layout** prepara los mensajes para su salida. **Logback** admite la creación de clases personalizadas para dar formato a los mensajes, así como sólidas opciones de configuración para los existentes.
 
-![](img/img_03.png)
+### Configuración 
 
-En `index.html` colocaremos un pequeño formulario que nos permitirá registrar a un usuario al cual le pediremos su nombre real, nombre de usuario, contraseña y rol. No te preocupes de la parte gráfica, en este curso nos ocuparemos de que el formulario sea funcional y en otros módulos haremos que tenga una mejor presentación. En el formulario usaremos los siguientes elementos de Thymeleaf:
+**Logback** utiliza **Simple Logging Facade** para Java (SLF4J) como su interfaz nativa. Antes de que podamos comenzar a mandar mensajes, debemos agregar **Logback** y **SLF4J** a nuestro `pom.xml`:
 
-- **th:action**: indica qué manejador de peticiones procesará la información del formulario.
-- **th:object**: el objeto que usaremos para llenar los datos del formulario (los cuales estarán inicialmente vacíos) y para enviar los datos al controlador que los procesará (una vez que hayamos llenado la información).
-- **th:field**: indica qué atributo de nuestro objeto está ligado con ese campo del formulario.
+```xml
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-core</artifactId>
+    <version>1.2.6</version>
+</dependency>
 
-El formulario contiene 4 campos y un botón para enviar la información al controlador correspondiente de Spring MVC.
-
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Registro</title>
-</head>
-<body>
-<form th:action="@{/registro}" th:object="${usuario}" method="post">
-    <div>
-        <label for="nombre">Nombre: </label>
-        <input id="nombre" type="text" th:field="*{nombre}">
-    </div>
-    <div>
-        <label for="username">Usuario: </label>
-        <input id="username" type="text" th:field="*{username}">
-    </div>
-    <div>
-        <label for="password">Contraseña: </label>
-        <input id="password" type="password" th:field="*{password}">
-    </div>
-
-    <div>
-        <label for="rol">Rol: </label>
-        <select name="rol" id="rol" th:field="*{rol}">
-            <option value="administrador">Administrador</option>
-            <option value="cliente">Cliente</option>
-        </select>
-    </div>
-
-    <input type="submit" th:value="Guardar"/>
-</form>
-</body>
-</html>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.30</version>
+    <scope>test</scope>
+</dependency>
 ```
 
-Ahora crea un paquete llamado `model`. Ahi colocaremos la clase `Usuario` la cual nos ayudará a recibir la información del formulario. `Usuario` tiene los siguientes atributos:
+**Logback** también requiere `logback-classic.jar`  en el classpath para el tiempo de ejecución.
 
-```java
-public class Usuario {
-    private String nombre;
-    private String username;
-    private String rol;
-    private String password;
-}
+Agregaremos esto a `pom.xml` como una dependencia de prueba:
+
+```xml
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.2.6</version>
+</dependency>
 ```
 
-Agrega los correspondientes **getters** y **setters**; no es necesario agregar ningún constructor a la clase anterior.
+Ahora creamos el archivo de configuración que tiene el nombre `logback.xml`, en este ejemplo crearemos un archivo de configuración sencillo, con el contenido siguiente:
 
-Ahora crea un nuevo paquete llamado `controller` y dentro de este una clase `UsuarioController`. 
+```xml
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-```java
-public class UsuarioController {
-    
-}
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
 ```
 
-Lo primero que haremos es indicar que esta clase es un controlador de Spring MVC decorándola con la anotación `@Controller`.
+Por último creamos una clase `Example` con el siguiente contenido:
 
 ```java
-@Controller
-public class UsuarioController {
+public class Example {
 
-}
-```
+    private static final Logger logger 
+      = LoggerFactory.getLogger(Example.class);
 
-A continuación, agregamos un manejador de peticiones tipo **GET**. Este manejador será invocado cuando solicitemos que se muestre el formulario vacío y colocará un `Usuario` "nuevo" (sin datos) para inicializar el formulario. Este es un paso incómodo pero necesario cuando trabajamos con Thymeleaf, ya que asocia un objeto al formulario y si no regresamos este objeto inicial obtendremos un error.
-
-Indicamos en el manejador que debe regresar el template con el nombre `index`.
-
-```java
-    @GetMapping({"/", "/index"})
-    public String formularioRegistro(Model model){
-        model.addAttribute("usuario", new Usuario());
-        return "index";
+    public static void main(String[] args) {
+        logger.info("Example log from {}", Example.class.getSimpleName());
     }
+}
 ```
 
-Agregamos un segundo manejador, para peticiones **POST**. Este segundo manejador será el que procese la petición una vez que el usaurio haya llenado el formulario. Lo único que haremos en este momento es recibir como parámetro el objeto `Usuario`, el cual contendrá la información que colocamos en el formulario, y lo regresaremos a una nueva vista en la plantilla `registroExitoso`:
+Esta clase crea un `logger` y llama a  `info()` para generar un mensaje de log.
 
-```java
-    @PostMapping("/registro")
-    public ModelAndView registra(Usuario usuario) {
-        ModelAndView mav = new ModelAndView("registroExitoso");
-        mav.addObject("usuario", usuario);
-        return mav;
-    }
+Al ejecutarlo obtenemos el siguiente resultado
+
+```bash
+20:34:22.136 [main] INFO Example - Example log from Example
 ```
 
-Finalmente, en la plantilla `registroExitoso.html` colocamos un mensaje felicitando al usuario por el registro:
+Resumiendo este ejemplo:
 
-
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro Exitoso</title>
-</head>
-<body>
-Bienvenido <strong><span th:text=${usuario.nombre}/></strong> tu registro ha sido exitoso
-</body>
-</html>
-```
-
-Ejecuta la aplicación y entra a la siguiente dirección desde tu navegador [http://localhost:8080/](http://localhost:8080). Debes ver el siguiente formulario:
-
-![](img/img_04.png)
-
-Coloca la información solicitada y presiona el botón `Guardar`:
-
-![](img/img_05.png)
-
-Debes ver la siguiente salida:
-
-![](img/img_06.png)
-
-
+- Tenemos un **appender**  llamado STDOUT que hace referencia al nombre de clase `ConsoleAppender`.
+- Hay un **layout** que describe el formato de nuestro mensaje de log.
+- Nuestro código crea un  `logger` y le pasamos nuestro mensaje a través de un  método `info()`.

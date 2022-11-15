@@ -1,13 +1,13 @@
-## Ejemplo 01: Proyecto Gradle con Spring Initializr
+## Ejemplo 01: Proyecto Maven con Spring Initializr
 
 ### OBJETIVO
 
-- Crear un proyecto Gradle usando Spring Initializr.
+- Crear un proyecto Maven usando Spring Initializr.
 - Compilar, empaquetar y ejecutar la aplicación o proyecto generados desde la línea de comandos.
 
 ### DESARROLLO
 
-Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Gradle), y los módulos o librerias que usarás.
+Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerias que usarás.
 
 Su objetivo es ayudarnos a generar esa estructura inicial del proyecto de una forma fácil y rápida para que podamos comenzar el desarrollo en el menor tiempo posible, teniendo la confianza de que contamos con una estructura correcta.
 
@@ -15,7 +15,7 @@ Su objetivo es ayudarnos a generar esa estructura inicial del proyecto de una fo
 #### Implementación
 
 Entra al sitio de [Spring Initializr](https://start.spring.io/). Ahí verás una sola página dividida en dos secciones. Comienza llenando la información de la sección del lado izquierdo. Selecciona:
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
+  - Maven Proyect (no te preocupes, no es necesario que tengas Maven instalado).
   - Lenguaje: **Java**.
   - Versión de Spring Boot, la versión estable más reciente
   - Grupo, artefacto y nombre del proyecto.
@@ -40,17 +40,15 @@ Descomprime el archivo `zip` descargado, el cual tiene más o menos el siguiente
 
 ![imagen](img/img_05.png)
 
-Abre una terminal o línea de comandos en el directorio que acabas de descomprimir y ejecuta los siguientes comandos, los cuales se ejecutan en Gradle gracias a un *wrapper* que se distribuye dentro del paquete que acabas de descargar:
+Abre una terminal o línea de comandos en el directorio que acabas de descomprimir y ejecuta los siguientes comandos, los cuales se ejecutan en Maven gracias a un *wrapper* que se distribuye dentro del paquete que acabas de descargar:
 
-        gradlew clean build
+        mvn clean
       
 7. La salida del comando anterior debe ser parecida a la siguiente:
 
 ![imagen](img/img_06.png)
 
-Una vez que todo está compilado, usa el siguiente comando para ejecutar la aplicación. 
-
-        gradlew bootRun
+Una vez que todo está compilado, ejecutamos la aplicación
         
 Debes obtener una salida similar a la siguiente:
 
@@ -66,26 +64,6 @@ Una vez que el sitio cargue, debes ver una pantalla como la siguiente:
 
 Detén la aplicación presionando `Ctrl + C` en la terminal en donde levantaste la aplicación.
 
-Puesto que la aplicación está completamente contenida en un archivo `jar`, también es posible ejecutarla de otra forma.
-
-Al compilar la aplicación con `gradlew build` se creó un directorio `build` y dentro de este un directorio `libs`. Navega a este directorio, el cual debe contener solamente un archivo `jar`.
-
-![imagen](img/img_09.png)
-
-Abre una terminal en este directorio y ejecuta el siguiente comando (cambia el nombre del jar si en tu caso es diferente):
-
-        java -jar sesion4-ejercicio1-0.0.1-SNAPSHOT.jar
-        
-Con esto debes obtener una salida como la siguiente:
-
-![imagen](img/img_10.png)
-
-Nuevamente, esto indica que la aplicación se levantó correctamente en el puerto **8080**.
-
-      http://localhost:8080
-      
-Una vez que el sitio cargue, debes ver una pantalla como la siguiente:
-
-![imagen](img/img_09.png)
+Puesto que la aplicación está completamente contenida en un archivo `jar`, también es posible ejecutarla como vimos en las sesiones anteirores.
 
 ¡¡Felicidades, acabas de ejecutar tu primer "Hola mundo" con Spring Boot!!

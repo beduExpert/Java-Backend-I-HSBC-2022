@@ -12,7 +12,7 @@ En este postwork deberás implementar la interface `CommandLineRunner` que propo
 
 Recuerda que para leer datos a través de una línea de comandos se utiliza la clase `Scanner` del paquete `java.util`.
 
-Recuerda que en el archivo de configuración de Gradle debes agregar la siguiente línea:
+Recuerda que en el archivo de configuración de Maven debes agregar la siguiente línea:
 
 ```groovy
 bootRun {
@@ -26,7 +26,7 @@ bootRun {
 Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
 
     Grupo, artefacto y nombre del proyecto.
-    Tipo de proyecto: **Gradle**.
+    Tipo de proyecto: **Maven**.
     Lenguaje: **Java**.
     Forma de empaquetar la aplicación: **jar**.
     Versión de Java: **11** o superior.

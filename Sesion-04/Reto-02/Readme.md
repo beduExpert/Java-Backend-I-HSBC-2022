@@ -26,7 +26,7 @@ Deberás validar el correcto funcionamiento de la aplicación usando la herramie
 Lo primero es crear un proyecto usando Spring Initializr desde el IDE IntelliJ Idea. Selecciona las siguientes opciones:
 
     Grupo, artefacto y nombre del proyecto.
-    Tipo de proyecto: **Gradle**.
+    Tipo de proyecto: **Maven**.
     Lenguaje: **Java**.
     Forma de empaquetar la aplicación: **jar**.
     Versión de Java: **11** o superior.

@@ -1,102 +1,146 @@
-## Ejemplo 01: Integración de Thymeleaf y Spring Boot
+# Ejemplo 01: Log4J2
 
-### OBJETIVO
+## OBJETIVO
 
-- Enviar un mensaje estático desde un controlador de Spring Boot a una página HTML generara con Thymeleaf.
+- Conocer Log4J2
+- Entender su configuración
+- Hacer un ejemplo sencillo con loggeo usando Log4J2
 
+## DESARROLLO
 
-### DESARROLLO
+Log4j 2 es una versión nueva y mejorada del marco de registro de Log4j. La mejora más convincente es la posibilidad de log asíncrono. Log4j 2 requiere las siguientes bibliotecas:
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+- `log4j-api`
+- `log4j-core`
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+Para este ejemplo inicializamos un proyecto con **Maven** desde **intelliJ**
 
-![](img/img_01.png)
+### Configuración
 
-En la siguiente ventana elige Spring Web y Thymelead como dependencias del proyecto:
+1. En primer lugar, debe agregar la biblioteca `Log4J2` al proyecto agregando la siguiente dependencia al archivo `pom.xml`:
 
-![imagen](img/img_02.png)
+```xml
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.6.1</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.6.1</version>
+</dependency>
+```
+2. La configuración de `Log4j2` se basa en el archivo de configuración principal `log4j2.xml`. Lo primero que hay que configurar es el agregador.
 
-Presiona el botón "Finish".
+Estos determinan dónde se enrutará el mensaje de log. El destino puede ser una consola, un archivo, un socket, etc.
 
-IntelliJ creará de forma automática un directorio llamdo "templates". Ahí es donde poderemos poner las plantillas que se usarán para la generación de las páginas HTML de nuestros proyectos. Dentro de este directorio crea una nueva página html llamada `hola.html`.
+Log4j2 tiene muchos appenders para diferentes propósitos, puede encontrar más información en el sitio oficial de `Log4j2`.
 
-![](img/img_03.png)
+Echemos un vistazo a un ejemplo de configuración simple.
 
-Reemplaza el contenido generado de la página con el siguiente, en donde indicamos que usaremos `th` como el namespace de Thymeleaf (el prefijo que le daremos a sus sentencias):
+3. Creamos el archivo `log4j2.xml` con el siguiente contenido:
 
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-</body>
-</html>
+```xml
+<Configuration status="debug" name="baeldung" packages="">
+    <Appenders>
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
+        </Console>
+    </Appenders>
+</Configuration>
 ```
 
-Ahora usaremos una *expresión* para indicar que usaremos una variable llamada `mensaje`, la cual será reemplazada con el valor que enviemos desde el controlador:
+Puede establecer un nombre para cada agregador, por ejemplo, use la consola de nombres en lugar de la salida estándar .
 
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-    <p th:text=${mensaje}></p>
-</body>
-</html>
+Observe el elemento PatternLayout: esto determina cómo debe verse el mensaje. En nuestro ejemplo, el patrón se establece en función del parámetro de patrón , donde %d determina el patrón de fecha, %p : salida del nivel de registro, %m : salida del mensaje registrado y %n : agrega un nuevo símbolo de línea.
+
+4. Finalmente, para habilitar un agregador (o varios), debe agregarlo a la sección `<Root>`:
+
+```xml
+<Root level="error">
+    <AppenderRef ref="STDOUT"/>
+</Root>
 ```
 
-Ahora crea un nuevo paquete llamado `controller` y dentro de este una clase `SaludoController`. 
+### Login en archivos
+
+A veces necesitará guardar el log en un archivo, por lo que agregaremos **fout logger** a nuestra configuración:
+
+```xml
+<Appenders>
+    <File name="fout" fileName="baeldung.log" append="true">
+        <PatternLayout>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%nw</Pattern>
+        </PatternLayout>
+    </File>
+</Appenders>
+```
+
+El agregador de archivos tiene varios parámetros que se pueden configurar:
+
+- **file** : determina el nombre de archivo del archivo de registro
+- **append** : el valor predeterminado para este parámetro es verdadero, lo que significa que, de manera predeterminada, un agregador de archivos se agregará a un archivo existente y no lo truncará.
+- **PatternLayout** que se describió en el ejemplo anterior.
+
+Para habilitar el agregador de archivos , debe agregarlo a la sección `<Root>`:
+
+```xml
+<Root level="INFO">
+    <AppenderRef ref="stdout" />
+    <AppenderRef ref="fout"/>
+</Root>
+```
+
+### Log Asíncrono
+
+Si desea que su Log4j2 sea asincrónico, debe agregar la biblioteca **LMAX disruptor** a su `pom.xml`. **LMAX disruptor** es una biblioteca de comunicación entre subprocesos sin bloqueo.
+
+Agregar **disruptor** a `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>com.lmax</groupId>
+    <artifactId>disruptor</artifactId>
+    <version>3.3.4</version>
+</dependency>
+```
+
+Si desea usar el **LMAX disruptor**, debe usar `<asyncRoot>` en lugar de `<Root>` en la configuración.
+
+```xml
+<AsyncRoot level="DEBUG">
+    <AppenderRef ref="stdout" />
+    <AppenderRef ref="fout"/>
+</AsyncRoot>
+```
+
+### Uso
+
+Ahora probemos los logs.
+
+1. Creamos una nueva clase en el proyecto llamada **Log4jExample** con el siguiente contenido.
 
 ```java
-public class SaludoController {
-    
-}
-```
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-Lo primero que haremos es indicar que esta clase es un controlador de Spring MVC decorándola con la anotación `@Controller`.
+public class Log4jExample {
 
-```java
-@Controller
-public class SaludoController {
+    private static Logger logger = LogManager.getLogger(Log4jExample.class);
 
-}
-```
-
-A continuación, agregamos un manejador de peticiones tipo **GET**. Este manejador no recibirá ningún parámetro y regresará un objeto de tipo `ModelAndView`:
-
-```java
-@GetMapping("/hola")
-public ModelAndView hola() {
-
-}
-```
-
-En el cuerpo de este método creamos una nueva instancia de `ModelAndView`. En el constructor le indicamos que el resultado de la petición será enviado a una vista llamada `hola` (el mismo nombre de la página que creamos hace un momento). Spring en automático buscará en el directorio `templates` un archivo que coincida con el nombre de la vista que estamos regresando.
-
-```java
-  @GetMapping("/hola")
-  public ModelAndView hola() {
-      ModelAndView mav = new ModelAndView("hola");
-  }
-```
-
-Finalmente, agregamos en el objeto `ModelAndView` valor de la variable `mensaje` en forma de atributo y regresamos este objeto como valor de retorno del método:
-
-
-```java
-    @GetMapping("/hola")
-    public ModelAndView hola() {
-        ModelAndView mav = new ModelAndView("hola");
-        mav.addObject("mensaje", "hola desde thymeleaf");
-        return mav;
+    public static void main(String[] args) {
+        logger.debug("Debug log message");
+        logger.info("Info log message");
+        logger.error("Error log message");
     }
+}
 ```
 
-Para terminar, ejecuta la aplicación y entra a la siguiente dirección desde tu navegador [http://localhost:8080/hola](http://localhost:8080/hola). Debes ver la siguiente salida:
+al ejecutarlo nos debe imprimir lo siguiente en la consola:
 
-![](img/img_04.png)
+```bash
+2016-06-16 17:02:13 INFO  Info log message
+2016-06-16 17:02:13 ERROR Error log message
+```
 

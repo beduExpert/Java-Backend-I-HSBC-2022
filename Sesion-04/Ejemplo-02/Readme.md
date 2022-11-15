@@ -36,7 +36,7 @@ En este ejemplo implementarás tu primer controlador REST usando Spring MVC.
 Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
 
     Grupo, artefacto y nombre del proyecto.
-    Tipo de proyecto: **Gradle**.
+    Tipo de proyecto: **Maven**.
     Lenguaje: **Java**.
     Forma de empaquetar la aplicación: **jar**.
     Versión de Java: **11** o superior.

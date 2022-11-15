@@ -6,7 +6,7 @@
 ### 1. Objetivos :dart:
 
 - Aprender qué es Spring Boot.
-- Usar Spring Initilizr para crear un proyecto Gradle para Spring Boot.
+- Usar Spring Initilizr para crear un proyecto Maven para Spring Boot.
 - Desarrollar y consumir un servicio web REST usando Spring MVC.
 
 
@@ -25,9 +25,9 @@ En este módulo aprenderemos:
 
 <img src=".github/assets/img/boost.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: Proyecto Gradle con Spring Initializr</ins>
+#### <ins>Tema 1: Proyecto Maven con Spring Initializr</ins>
 
-Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Gradle), y los módulos o librerías que usarás.
+Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerías que usarás.
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
 - [**`Reto 1`**](./Reto-01)
