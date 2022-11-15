@@ -23,16 +23,26 @@ Para definir una suite de prueba debemos elegir una de las dos últimas anotacio
 
 Para incluir las suites de pruebas en el proyecto debemos agregar una dependencia adicional en el archivo `build.grade`:
 
-```groovy
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    implementation 'org.junit.platform:junit-platform-suite-engine:1.8.2'
-}
-
-test {
-    useJUnitPlatform()
-}
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-engine</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+    </dependencies>
 ```
 
 Para este ejercicio modificaremos la clase de prueba de la calculadora del primer ejercicio. Dejaremos esta clase vacía y crearemos una clase especial para validar cada una de las operaciones. Así que al final tendremos 5 clases.

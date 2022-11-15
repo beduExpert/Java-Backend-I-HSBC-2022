@@ -27,19 +27,21 @@ Para este ejercicio modificaremos la calculadora que usamos en el ejemplo anteri
 
 Lo primero que debemos hacer es incluir las dependencias de JUnit y Mockito en nuestro proyecto. Esto lo hacemos colocando las siguientes línea en el archivo build.gradle, las cuales indican que debemos usar la dependencia de Junit jupiter solo en la etapa de pruebas:
 
-```groovy
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
-    testImplementation 'org.mockito:mockito-core:4.3.1'
-}
-
-test {
-    useJUnitPlatform()
-}
-
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 ```
 
 Como siguiente paso, definimos una interface del DAO que se encargará de leer el valor constante de la base de datos:
