@@ -12,7 +12,7 @@
 
 #### 👀 Antes de comenzar...
 
-Debemos verificar que nuestro equipo tenga correctamente instalado **Java** y **Gradle**:
+Debemos verificar que nuestro equipo tenga correctamente instalado **Java** y **Maven**:
 
 - Para verificar la versión instalada de **Java** ejecuta el comando `java -version`:
 
@@ -20,27 +20,29 @@ Debemos verificar que nuestro equipo tenga correctamente instalado **Java** y **
 
 *Nota: Usaremos la versión 11 de Java aunque puedes usar la más reciente.*
 
-- Para verificar la versión instalada de **Gradle** ejecuta el comando `gradle -version`:
+- Para verificar la versión instalada de **Maven** ejecuta el comando `mvn -version`:
 
 <img src="../.github/assets/img/gradle-version.png" alt="Versión de Gradle" />
 
-*Nota: Usaremos la versión 7 de Gradle aunque puedes usar la más reciente.*
+*Nota: Usaremos la versión 3 de Maven aunque puedes usar la más reciente.*
 
 En este módulo aprenderemos:
-- Creación de archivo `build.gradle`
-- Compilación de código Java usando Gradle
-- Ejecución de programas en código Java usando Gradle
-- Instalación y uso de plugins de Gradle
+- Creación de archivo de configuración de **Maven**
+- Compilación de código Java usando Maven
+- Ejecución de programas en código Java usando Maven
+- Instalación y uso de plugins de Maven
 
 ---
 
 <img src=".github/assets/img/Build-Tools.jpg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: ¿Qué es Gradle?</ins>
+#### <ins>Tema 1: ¿Qué es Maven?</ins>
 
-Todo proyecto que utilice Gradle como herramienta de construcción debe tener un archivo llamado `gradle.build` el cual contiene las instrucciones necesarias (en lenguaje Groovy) para ejecutar **tareas** que ayuden a realizar alguna acción sobre código.
+Maven es una herramienta desarrollada en Java que simplifica las tareas de compilación y construcción de aplicaciones de software, principalmente usado con lenguajes de programación que tienen como destino ser ejecutadas en la Java Virtual Machine (JVM). Además, incorpora una gestión de dependencias madura con acceso a los repositorios públicos de Maven con más de 16 Millones de librerías disponibles incluyendo todas las versiones de cada una de ellas.
 
-Comenzaremos con el [primer ejemplo](./Ejemplo-01) creando nuestras propias tareas personalizadas para conocer el uso básico de Gradle.
+Los proyectos que usan **Maven** como herramienta de construcción tienen un archivo de configuració  llamado `pom.xml`. En el que se definen todos los parámetros del uso de **Maven**
+
+Comenzaremos con el [primer ejemplo](./Ejemplo-01) creando Un proyecto de Java que use **Maven**.
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
 

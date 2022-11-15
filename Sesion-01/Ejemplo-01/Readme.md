@@ -2,46 +2,57 @@
 
 ### OBJETIVO
 
-- Crear un archivo `build.gradle`
-- Crear una tarea personalizada en **Gradle**
+- Crear un archivo `pom.xml`
+- Entender la organización de los proyectos con **Maven**
 
 ### DESARROLLO
 
-Comenzamos creando un archivo llamado `build.gradle`.
+1. Abrimos el IDE **intelliJ IDEA** y seleccionamos la creación de un nuevo proyecto.
 
-> 💡 *Nota: Es importante verificar que el archivo se llame exactamente `build.gradle` dado que Gradle busca un archivo con ese nombre para saber qué hacer.*
+2. Seleccionamos la siguiente configuración del proyecto:
 
-A continuación escribiremos las siguientes líneas que nos ayudarán a definir nuestra tarea personalizada:
+![Configuración](img/01.png)
 
-```groovy
-task hello {
-}
+Es importante notar que como sistema de construcción se eligió a **Maven**
+
+3. Con esto, nuestro IDE nos crea un proyecto completo en el que ya viene el archivo de configuración de **Maven**.
+
+4. Abrimos el archivo `pom.xml` que debe verse como el de la siguiente imagen.
+
+![pom](img/02.png)
+
+En este archivo se puede ver la configuración completa del proyecto, en donde podemos encontrar el nombre del proyecto en la sección:
+
+```xml
+  <artifactId>sesion01</artifactId>
 ```
 
-¿No entiendes que acabamos de escribir? ¡Tranquilo! 😅
+Y también otras propiedades de compilación y construcción como:
 
-Lo que acabamos de escribir es la definición de una **tarea** en lenguaje **Groovy**, es decir, una **función** llamada *hello* (nombre al que haremos referencia a la tarea para poder ejecutarla).
-
-Lo siguiente será escribir lo que queremos que haga la tarea, en este caso queremos que imprima en pantalla la palabra "Hello World":
-
-```groovy
-task hello {
-  doLast {
-    println 'Hello World'
-  }
-}
+```xml
+    <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+        <maven.compiler.target>18</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 ```
 
-Nuevamente escribimos una función llamanda *doLast* que nos permite ejecutar líneas de código en lenguaje Groovy.
+En donde indica que se usa la versión 18 de Java y una codificación de texto `UTF-8`.
 
-Por último `println 'Hello World'` puedes verlo como usar `System.out.println` de Java, es decir, imprimimos en pantalla la palabra "Hello World".
+5. **Maven** define que todo proyecto Java, ya sea para construir una biblioteca o para una aplicación, debe tener la siguiente estructura de directorios en el sistema de archivos:
 
-Guardamos el archivo, abrimos la terminal y ubicados en la carpeta que contenga el archivo `build.gradle` ejecutaremos el siguiente comando:
+- `pom.xml`: archivo de descripción, ubicado en la raíz del proyecto. En él se indica su nombre, la ubicación que tendrá éste en el repositorio de binarios, las dependencias que necesita para compilar, para ejecutar o para lanzar los test. También se especifica si se hará uso de plugins.
 
-`gradle hello`
+- `src/main/java`: directorio en donde se ubicarán los archivos Java del proyecto que serán compilados y formarán parte del binario resultante. A partir de ese directorio es donde se tendrán en cuenta los paquetes de los archivos Java. Por ejemplo, el archivo fuente de la clase `org.proyecto.Persona` se ubicará en `src/main/java/org/proyecto/Persona.java`.
 
-Teniendo como resultado:
+- `src/main/resources`: permite añadir recursos que también se incorporarán dentro del binario resultante, pero que no deben ser compilados. Por ejemplo, los archivos con extensión .properties, XML o imágenes.
 
-![](img/ejercicio-01-hello.png)
+- `src/test/java`: directorio para colocar las fuentes Java que únicamente se usarán en la ejecución de los test unitarios. El contenido de este directorio no será empaquetado en el binario final.
 
-¡Muy bien! Acabamos de ejecutar nuestra primer tarea personalizada de Gradle 🎉🥳🎊
+- `src/test/resources`: necesario si para la ejecución de los test se utilizan otros recursos como archivos XML o CSV con datos de prueba para verificar los algoritmos. Los archivos incluidos no serán empaquetados en el archivo final.
+
+- `target/classes`: en este directorio se almacenarán las clases Java resultantes de la compilación de las fuentes almacenadas en `src/main/java`
+.
+- `target/<proyecto.jar>`: típicamente los proyectos generarán un binario con el contenido de `target/classes` más `src/main/resources` en un único archivo empaquetado con extensión jar. Si el proyecto es una aplicación, éste contendrá además todas las dependencias dentro de él para que se disponga de todo lo necesario a la hora de ejecutar la aplicación, formando un archivo denominado fat-jar.
+
+Prácticamente todos los editores de programación de Java trabajan perfectamente con los proyectos organizados como indica **Maven**. Se puede considerar que se ha convertido en un estándar de facto. Los editores automáticamente procesan el archivo `pom.xml` para tener presente las dependencias necesarias y ajustar la configuración del proyecto acorde con lo especificado en el archivo.
