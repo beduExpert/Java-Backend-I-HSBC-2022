@@ -1,12 +1,12 @@
-## Reto 02: Ejecución de una aplicación Java con Gradle
+## Reto 02: Ejecución de una aplicación Java con Maven
 
 ### OBJETIVO
 
-- Compilar y ejecutar un programa en Java utilizando Gradle como herramienta de construcción
+- Compilar y ejecutar un programa en Java utilizando Maven como herramienta de construcción
 
 ### DESARROLLO
 
-Crear un programa que imprima en pantalla la suma de los primeros 100 números y que pueda ser ejecutado a través de un comando con Gradle.
+Crear un programa que imprima en pantalla la suma de los primeros 100 números y que pueda ser ejecutado a través de IntelliJ.
 
 <details>
   <summary>Solución</summary>
@@ -27,17 +27,5 @@ Crear un programa que imprima en pantalla la suma de los primeros 100 números y
   }
   ```
 
-  A continuación crearemos el archivo `build.gradle` basado en la explicación del Ejemplo 04:
-
-  ```groovy
-  plugins {
-    id 'application'
-  }
-
-  application {
-    mainClass = "SumOfFirst100Numbers"
-  }
-  ```
-
-  Por último bastará con ejecutar el comando `gradle run` para ver el resultado en la terminal.
+  Por último bastará con ejecutar con el botón de play.
 </details>

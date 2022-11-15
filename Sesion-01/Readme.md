@@ -22,7 +22,7 @@ Debemos verificar que nuestro equipo tenga correctamente instalado **Java** y **
 
 - Para verificar la versión instalada de **Maven** ejecuta el comando `mvn -version`:
 
-<img src="../.github/assets/img/gradle-version.png" alt="Versión de Gradle" />
+![](img/01.png)
 
 *Nota: Usaremos la versión 3 de Maven aunque puedes usar la más reciente.*
 
@@ -50,9 +50,9 @@ Comenzaremos con el [primer ejemplo](./Ejemplo-01) creando Un proyecto de Java q
 
 <img src=".github/assets/img/command-line.jpg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 2: Compilación y ejecución con Gradle.</ins>
+#### <ins>Tema 2: Compilación y ejecución con Maven.</ins>
 
-Ahora que conocemos el uso general de Gradle, veremos cómo usarlo para el desarrollo de aplicaciones Java. En el [segundo ejemplo](./Ejemplo-02) lo usaremos para compilar una aplicación desde línea de comandos (así es, sin usar un IDE) y posteriormente, en el [tercer ejemplo](./Ejemplo-03) generaremos un jar para su ejecución usando el mismo Gradle.
+Ahora que conocemos el uso general de Maven, veremos cómo usarlo para el desarrollo de aplicaciones Java. En el [segundo ejemplo](./Ejemplo-02) lo usaremos para compilar una aplicación desde línea de comandos.
 
 Es aquí donde tendrás tu [primer reto](./Reto-01) en el que tendrás que escribir tu primera aplicación, compilarla y generar un archivo `.jar`.
 
@@ -66,7 +66,7 @@ Es aquí donde tendrás tu [primer reto](./Reto-01) en el que tendrás que escri
 
 #### <ins>Tema 3: Compilación y ejecución de aplicaciones Javas.</ins>
 
-Aquí aprenderás como compilar y ejecutar tu aplicación sin tener que generar el archivo `.jar`. Para eso usaremos un plugin de Gradle, `application` el cual nos simplificará la vida. 
+Aquí aprenderás como compilar y ejecutar tu aplicación sin tener que generar el archivo `.jar` explicitamente. 
 
 - Compilación y ejecución de aplicaciones Java
 

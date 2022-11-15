@@ -1,12 +1,12 @@
-## Reto 01: Compilación y generación de JAR con Gradle
+## Reto 01: Compilación y generación de JAR con Maven
 
 ### OBJETIVO
 
-- Compilar y generar un archivo JAR a partir de un código Java con Gradle
+- Compilar y generar un archivo JAR a partir de un código Java con Maven
 
 ### DESARROLLO
 
-Crear un programa en Java que convierta un número entero a binario, dicho programa deberá compilarse con Gradle.
+Crear un programa en Java que convierta un número entero a binario, dicho programa deberá compilarse con Maven.
 
 <details>
   <summary>Solución</summary>
@@ -25,19 +25,27 @@ Crear un programa en Java que convierta un número entero a binario, dicho progr
   }
   ```
 
-  Por último, basados en el Ejemplo 02 y 03 podemos crear el siguiente archivo de Gradle:
+  Por último, basados en el Ejemplo 02 y 03 podemos crear el siguiente archivo de Maven:
 
-  ```groovy
-  plugins {
-    id 'java'
-  }
+  ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  jar {
-    manifest {
-      attributes 'Main-Class': 'IntegerToBinary'
-    }
-  }
+    <groupId>org.example</groupId>
+    <artifactId>reto01</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+        <maven.compiler.target>18</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>
   ```
 
-  Así al ejecutar el comando `gradle build` generará el JAR correspondiente.
+  Así al ejecutar el comando `mvn compile` generará el JAR correspondiente.
 </details>
