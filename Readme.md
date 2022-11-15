@@ -36,14 +36,14 @@ Además, usaremos uno de los mejores IDE (Integrated Develoment Environment) del
 
 ## :bookmark_tabs: Sesiones 
 
-| Sesión | Tema                                                         | Descripción                                                       |
-|--------|--------------------------------------------------------------|-------------------------------------------------------------------|
-|    1   | [Construcción de proyectos con Maven](./Sesion-01)          | ¿Qué es Gradle y cómo lo uso para desarrollar proyectos?          |
-|    2   | [Patrones de diseño](./Sesion-02)                            | Entender los patrones de diseño básicos para trabajar con Spring. |
-|    3   | [Anotaciones y pruebas unitarias con JUnit](./Sesion-03)     | Desarrollo de pruebas para garantizar el funcionamiento de mi app.|
-|    4   | [Introducción a Spring Boot](./Sesion-04)                    | Introducción y primeros pasos de este módulo de Spring.           |
-|    5   | [Java Beans y la Inversión de Control](./Sesion-05)          | Usar Spring como motor de inyección de dependencias.              |
-|    6   | [Patrón MVC con Spring Boot](./Sesion-06)                    | Usar Spring MVC como framework de manejo de peticiones web.       |
-|    7   | [Integración de Thymeleaf y Spring Boot](./Sesion-07)        | Usar Thymeleaf como motor de generación de vistas dinámicas.       |
-|    8   | [Conexión a base de datos con Spring Data](./Sesion-08)      | Usar Spring Data JPA para trabajar con bases de datos relacionales.|
+| Sesión | Tema                                                         | Descripción                                                        |
+|--------|--------------------------------------------------------------|--------------------------------------------------------------------|
+|    1   | [Construcción de proyectos con Maven](./Sesion-01)           | ¿Qué es Gradle y cómo lo uso para desarrollar proyectos?           |
+|    2   | [Patrones de diseño](./Sesion-02)                            | Entender los patrones de diseño básicos para trabajar con Spring.  |
+|    3   | [Anotaciones y pruebas unitarias con JUnit](./Sesion-03)     | Desarrollo de pruebas para garantizar el funcionamiento de mi app. |
+|    4   | [Introducción a Spring Boot](./Sesion-04)                    | Introducción y primeros pasos de este módulo de Spring.            |
+|    5   | [Java Beans y la Inversión de Control](./Sesion-05)          | Usar Spring como motor de inyección de dependencias.               |
+|    6   | [Patrón MVC con Spring Boot](./Sesion-06)                    | Usar Spring MVC como framework de manejo de peticiones web.        |
+|    7   | [Monitoreo y logs con Log4J y LogBack](./Sesion-07)          | Usar Thymeleaf como motor de generación de vistas dinámicas.       |
+|    8   | [Protocol Buffers](./Sesion-08)                              | Usar Spring Data JPA para trabajar con bases de datos relacionales.|
 

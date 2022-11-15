@@ -1,161 +1,77 @@
-## Ejemplo 01: Persistencia de datos con Spring Data JPA
+## Ejemplo 1: 
 
-### OBJETIVO
+### Objetivo
+- Conocer los archivos .proto para la serialización en Protocol Buffers
+- Relacionarse y conocer las características y funcionalidades de los archivos .proto
+---
 
-- Hacer uso de las anotaciones básicas de JPA para indicar qué objeto debe ser tratado como una entidad de base de datos.
-- Aprender qué es un repositorio y los métodos por default que ofrece.
+### Requisitos
+- JDK 8 (o superior)
+---
 
+### Desarrollo
+1. [Descargar](https://github.com/protocolbuffers/protobuf/releases/tag/v3.11.1) protoc (compilador proto) según sea su sistema operativo.
+2. Agregar al las variables del sistema protoc (Si se desea no ejecutar desde la misma carpeta y especificar la carpeta origen, aunque este paso no es 100% necesario):
 
-### DESARROLLO
+* windows
+![Agregar variable de sistema](img/agregar_variable.png)
 
-Antes de comenzar asegúrate de tener instado [MySQL Community Edition](https://www.mysql.com/products/community/) y de crear una base de datos llamada `bedu`.
+* linux:
+```
+export PATH="/path/to/proto:$PATH"
+~/.bashrc
+```
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+3. Verificar proto en un powershell/cmd/terminal:
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+Ejecutar la instrucción: `protoc --version`. 
 
-![](img/img_01.png)
+Esto debería devolver: `libprotoc 3.11.1`
 
-En la siguiente ventana elige `Spring Web`, `MySQL Driver` y `Spring Data JPA` como dependencias del proyecto:
+4. Crear un Archivo llamado `user.proto` con la siguiente estructura:
 
-![imagen](img/img_02.png)
+```
+syntax = "proto2";
 
-Presiona el botón "Finish".
+package org.bedu.ejemplo01.protos;
 
-Dentro del nuevo proyecto crea los siguientes subpaquetes: `controller`, `model` y `persistence`.
+option java_package = "org.bedu.ejemplo01.protos.models";
+option java_outer_classname = "UserProto";
 
-![](img/img_03.png)
+message User {
+  required string name = 1;
+  required int32 id = 2;
+  required string email = 3;
+  required string password = 4;
 
-Dentro del paquete `model` crea una clase llamada `Cliente` con los siguientes atributos, y agrega sus correspondientes métodos **getter** y **setter**:
-
-```java
-public class Cliente {
-    private Long id;
-    private String nombre;
-    private String correoContacto;
-    private int numeroEmpleados;
-    private String direccion;
+  enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+  }
+    
 }
 ```
 
-Decora la clase con las anotaciones `@Entity` y `@Table` del paquete `javax.persistence`:
+* la primera línea especifica la sintaxis del archivo (versión 2 o 3 de proto).
+* La segunda especifica el paquete para evitar conflictos entre proyectos (hablando de los archivos proto).
+* seguido, `option java_package` especifica en cuál paquete irán las clases generadas.
+* `option java_outer_classname` define la clase que contiene todos los mensajes y declaraciones de este archivo `proto` (Esta será la clase compilada).
+* Los valores (marcadores) asignados a los campos, son en realidad un tag que los campos utilizan en la codificación binaria. Del 1-15 requieren un byte menos para codificarse (contra valores mayores). Esto es útil en temas de optimización.
 
-```java
-@Entity
-@Table(name = "CLIENTE")
-public class Cliente {
+5. Mover este archivo a un paquete lamado `protos`.
 
-}
+Ejecutar:
+
+```bash
+ protoc --java_out="origen_codigo_java" --proto_path="path_destino_clases_generadas" 'path_de_archivo.proto'
 ```
 
-Decora los atributos `id`, `correoContacto` y `numeroEmpleados` con las siguientes anotaciones (`nombre` y `direccion` permanecen igual)
+Por ejemplo, dado la estructura del proyecto y suponiendo que el está en el escritorio, la compilación se realizaría de la siguiente manera:
 
-```java
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String nombre;
-
-    @Column(name = "correo_contacto", length = 30)
-    private String correoContacto;
-
-    @Column(name = "numero_empleados")
-    private int numeroEmpleados;
-
-    private String direccion;
+```bash
+protoc --java_out="C:\Users\mi-usuario\Desktop\05 Protocol Buffers\ejemplo01\ejemplo01\src\main\java" --proto_path="C:\Users\mi-usuario\Desktop\05 Protocol Buffers\ejemplo01\ejemplo01\src\main\java" 'C:\Users\mi-usuario\Desktop\05 Protocol Buffers\ejemplo01\ejemplo01\src\main\java\org\bedu\ejemplo01\protos\user.proto'
 ```
 
-En el paquete persistence crea una interface llamada `ClienteRepository` que extienda de `JpaRepository`. Esta interface permanecerá sin métodos:
+Notar que cada directorio es separado por un espacio.
 
-```java
-public interface ClienteRepository  extends JpaRepository<Cliente, Long> {
-
-}
-```
-
-En el paquete `controller` crea una nueva clase llamada `ClienteController` y decórala con las anotaciones de Spring MVC para indicar que esta clase es un controlador web.
-
-```java
-@RestController
-@RequestMapping("/cliente")
-public class ClienteController {
-
-}
-```
-
-Agrega un atributo `final` de tipo `ClienteRepository`:
-
-```java
-  private final ClienteRepository clienteRepository;
-```
-
-Agrega un constructor a `ClienteController` e inyecta la la instancia de `ClienteRepository` usando la inyección de construcción:
-
-```java
-    @Autowired
-    public ClienteController(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
-    }
-```
-
-Crea un método **POST** que reciba un objeto `Cliente` como parámetro y regrese un código de respuesta `201`:
-
-```java
-    @PostMapping
-    public ResponseEntity<Void> creaCliente(@RequestBody Cliente cliente){
-        return ResponseEntity.created(URI.create("")).build();
-    }
-```
-
-Dentro del método `creaCliente` usa el objeto `clienteRepository` para guardar el objeto `cliente` en base de datos. Usa el `id` del objeto almacenado para regresarlo en la respuesta del método.
-
-```java
-    @PostMapping
-    public ResponseEntity<Void> creaCliente(@RequestBody Cliente cliente){
-
-        Cliente clienteDB = clienteRepository.save(cliente);
-
-        return ResponseEntity.created(URI.create(clienteDB.getId().toString())).build();
-    }
-```
-
-En el directorio `resources` busca o crea el archivo `application.properties`.
-
-![](img/img_04.png)
-
-Coloca el siguiente contenido en el archivo (personaliza el contenido en caso de ser necesario):
-
-```groovy
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.hibernate.generate_statistics=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.datasource.url=jdbc:mysql://localhost:3306/bedu?serverTimezone=UTC
-spring.datasource.username=<usuario>
-spring.datasource.password=<password>
-```
-
-Ejecuta la aplicación y envía la siguinte petición desde Postman:
-
-```json
-{
-    "nombre": "BeduORG",
-    "correoContacto": "contacto@bedu.org",
-    "numeroEmpleados": "20",
-    "direccion": "direccion"
-}
-```
-
-debes tener la siguiente respuesta en la consola de Postman:
-
-![](img/img_05.png)
-
-
-Revisa la base de datos, la tabla `CLIENTE` debe haberse creado de forma automática y debe tener almacenado el registro con los datos enviados desde Postman:
-
-![](img/img_06.png)
+Si se observa el resultado, ahora existe un paquete `models.protos` y este contiene la clase compilada `UserProto.java` (Tal y como lo especificamos en el archivo .proto)

@@ -1,23 +1,58 @@
-## Sesión 8: Conexión a base de datos con Spring Data
+## Postwork Sesión 5
 
-### OBJETIVO
+A lo largo de este proyecto reafirmaremos lo que se ha aprendido durante las sesiones.
 
-- Almacenar la información de los nuevos registros de la agenda en una base de datos relacional.
-- Recuperar de la base de datos los registros existentes para mostrarlos en la lista de entradas.
+### Módulo 5 - Protocol Buffers
 
-### DESARROLLO
+- Continuamos con el postwork de la sesion 4.
+- Solo modificaremos la clase principal (anotada con `@SpringBootApplication`) para que quede de la siguiente manera:
 
-En el Postwork de la sesión anterior le dimos a nuestra agenda una interfaz de usuario muy sencilla. Con ella ya podemos ingresar en un formulario la información de las personas, y recuperar la misma para mostrarla en una lista. Sin embargo, debido a que estamos usando un almacén en memoria, cada vez que reiniciamos la aplicación perdemos la información que ya habíamos guardado. 
+```java
+package org.bedu.postworksone;
 
-En esta ocasión tu misión será extender este programa eliminando el `Set` en donde almacenamos la información de la agenda, y reemplzándolo por una base de datos relacional en MySQL. De esta forma, aunque reiniciemos la aplicación la información seguirá estando disponible.
+import lombok.RequiredArgsConstructor;
+import org.bedu.postworksone.documents.Doctor;
+import org.bedu.postworksone.repositories.DoctorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-1. Deberás integrar las depencias de Spring data JPA y el driver de MySQL en el archivo `build.gradle`.
-1. Reemplaza la clase `AgendaMemoryDao` por un repositorio de Spring Data.
-1. Convierte la clase `Persona` en una entidad de JPA.
-1. Los distintos elementos de la aplicación se conectarán a través de clases “servicio” y controladores de Spring MVC.
+import java.text.SimpleDateFormat;
 
+@SpringBootApplication
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class PostworkS1Application implements CommandLineRunner {
 
----
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private final DoctorRepository doctorRepository;
 
-### Solución
-¡Recuerda intentar resolver el reto antes de ver la solución! Una vez que lo hayas intentado puedes dirijirte al [proyecto con la solución](./solucion).
+    public static void main(String[] args) {
+        SpringApplication.run(PostworkS1Application.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        Doctor doctor = new Doctor(null, "Diana Laura", "García", new SimpleDateFormat(DATE_FORMAT).parse("1995-09-12"), false, null, 1);
+        doctorRepository.save(doctor).subscribe();
+    }
+}
+
+```
+
+### Contexto general
+
+El dueño del sistema ha decidido abrir un nuevo hospital, sin embargo, este nuevo hospital será más sofisticado tecnológicamente.
+
+El nuevo proyecto ya ha sido asignado ya a otro equipo de desarrollo. El equipo de desarrollo mencionado trabaja con protocol buffers.
+
+Tambien te mencionaron que el nuevo hospital tendrá más datos de sus doctores con el paso del tiempo (la estructura de los doctores del nuevo hospital no será siempre la misma que la del hospital actual, con el tiempo se podrán agregar datos).
+
+Se te ha encomendado una tarea inicial de proporcionarles un acceso a los doctores del hospital actual con la diferencia de que en lugar de enviarles las respuestas en JSON, la requieren serializadas mediante Protocol Buffers. Obviamente no se debe modificar la funcionalidad actual del sistema (Open/close principle).
+
+### Resultado esperado
+
+Al finalizar la tarea se espera que al consultar el siguiente endpoint:
+`localhost:8080/protobuf/doctor/{idDoctor}` se retornen los datos del doctor pero serializados con Protocol Buffers. 
+
+De igual manera, el endpoint `localhost:8080/Doctor/{idDoctor}` no debería verse afectado y debería seguir devolviendo los datos en JSON (para el hospital actual).

@@ -1,22 +1,17 @@
-## Reto 01: Valores dinámicos con Thymeleaf
+## Reto 01: Log4J2
 
 ### OBJETIVO
 
-- Generar un mensaje de forma dinámico que se muestre en una página HTML generada con Thymeleaf
+- Prácticar el uso de la herramienta de mensajes de log.
 
 ### DESARROLLO
 
-Ahora que pudimos mostrar un mensaje estático en una página creada con Thymeleaf es momento de cambiarlo por uno dinámico. En esta ocasión deberás recibir una cadena de texto proporcionada por el usuario y mostrar la en una página. La cadena de texto puede contener cualquier número de caracteres y espacios en blanco.
+El objetivo del reto es crear un programa con las siguiente características:
 
-No te preocupes si al momento de ejecutar la aplicación esta muestra el siguiente contenido, eso quiere decir que el controlador no está recibiendo el parámetro proporcionado:
-
-![imagen](img/img_01.png)
-
-¡Buena suerte!
-
-
----
-
-### Solución
-
-¡Recuerda intentar resolver el reto antes de ver la solución! Una vez que lo hayas intentado puedes dirijirte al [proyecto con la solución](./solucion).
+1. Tener una clase `Sort` con un método `sorting` que recibe un arreglo y regresa el arreglo ordenado.
+2. En dado caso de recibir un arreglo ordenado imprimir como log el mensaje `"el arreglo ya está ordenado"`
+3. Si el arreglo es vacío, mandar como log en forma de error el mensaje `"El arreglo es vacío"`
+4. Si no cumple las condiciones anteriores, entonces cuando termine el proceso de ordenamiento del arreglo imprimir como log `"se terminó de ordenar el arreglo"`
+5. Todos estos mensajes deben generarse con un formato diferente.
+6. Generar los logs con `Log4J2`
+7. Modificar el archivo de configuración de `Log4J2` para que guarde estos logs en un archivo.
