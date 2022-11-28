@@ -1,12 +1,12 @@
-## Sesión 1: Construcción de proyectos con Gradle :elephant:
+## Sesión 1: Construcción de proyectos con Maven 
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gradle/gradle-plain.svg" align="right" height="120" hspace="10">
+<!-- <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gradle/gradle-plain.svg" align="right" height="120" hspace="10"> -->
 
 <div style="text-align: justify;">
  
 ### 1. Objetivos :dart:
 
-- Aprender el uso de la herramienta Gradle para construir y ejecutar proyectos en lenguaje Java.
+- Aprender el uso de la herramienta Maven para construir y ejecutar proyectos en lenguaje Java.
 
 ### 2. Contenido :blue_book:
 

@@ -26,7 +26,7 @@ Una de las mejores cualidades de Java es que fue el primer lenguaje completament
 
 ### [Descargar Maven](https://maven.apache.org/install.html)
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Apache_Maven_logo.svg/1280px-Apache_Maven_logo.svg.png" alt="Gradle" width="100"/>
+<!-- <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Apache_Maven_logo.svg/1280px-Apache_Maven_logo.svg.png" alt="Gradle" width="100"/> -->
 
 Además, usaremos uno de los mejores IDE (Integrated Develoment Environment) del mercado para editar el código de nuestras aplicaciones: [IntelliJ IDEA](https://www.jetbrains.com/idea/). Este IDE cuenta con dos versiones, **Community Edition** y **Ultimate**. La edición Community tiene todos los elementos que necesitarás para el desarrollo del curso (además de que es la versión gratuita del IDE). Si quieres experimentar el poder completo de IntelliJ Idea puedes descargar un trial de la versión Ultimate, el cual te dejará usarlo de forma libre por 30 días (¡más que suficiente para terminar este módulo del curso!).
 
@@ -38,7 +38,7 @@ Además, usaremos uno de los mejores IDE (Integrated Develoment Environment) del
 
 | Sesión | Tema                                                         | Descripción                                                        |
 |--------|--------------------------------------------------------------|--------------------------------------------------------------------|
-|    1   | [Construcción de proyectos con Maven](./Sesion-01)           | ¿Qué es Gradle y cómo lo uso para desarrollar proyectos?           |
+|    1   | [Construcción de proyectos con Maven](./Sesion-01)           | ¿Qué es Maven y cómo lo uso para desarrollar proyectos?           |
 |    2   | [Patrones de diseño](./Sesion-02)                            | Entender los patrones de diseño básicos para trabajar con Spring.  |
 |    3   | [Anotaciones y pruebas unitarias con JUnit](./Sesion-03)     | Desarrollo de pruebas para garantizar el funcionamiento de mi app. |
 |    4   | [Introducción a Spring Boot](./Sesion-04)                    | Introducción y primeros pasos de este módulo de Spring.            |
