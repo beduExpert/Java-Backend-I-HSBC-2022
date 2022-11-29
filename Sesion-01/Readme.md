@@ -75,11 +75,11 @@ Aquí aprenderás como compilar y ejecutar tu aplicación sin tener que generar 
 
 ---
 
-### 3. Postwork :memo:
+<!-- ### 3. Postwork :memo:
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
  
-- [**`POSTWORK SESIÓN 1`**](./Postwork/)
+- [**`POSTWORK SESIÓN 1`**](./Postwork/) -->
   
 <br/>
 
