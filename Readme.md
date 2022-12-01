@@ -36,14 +36,14 @@ Además, usaremos uno de los mejores IDE (Integrated Develoment Environment) del
 
 ## :bookmark_tabs: Sesiones 
 
-| Sesión | Tema                                                         | Descripción                                                        |
-|--------|--------------------------------------------------------------|--------------------------------------------------------------------|
-|    1   | [Construcción de proyectos con Maven](./Sesion-01)           | ¿Qué es Maven y cómo lo uso para desarrollar proyectos?           |
-|    2   | [Patrones de diseño](./Sesion-02)                            | Entender los patrones de diseño básicos para trabajar con Spring.  |
-|    3   | [Introducción a Spring Boot](./Sesion-03)     | ntroducción y primeros pasos de este módulo de Spring. |
-|    4   | [Java Beans y la Inversión de Control](./Sesion-04)                    | Usar Spring como motor de inyección de dependencias.            |
-|    5   | [Conexión a base de datos con Spring Data JPA](./Sesion-05)          | Usar Spring como motor de inyección de dependencias.               |
-|    6   | [Mensajeria de colas con JMS](./Sesion-06)                    | Usar Spring MVC como framework de manejo de peticiones web.        |
-|    7   | [Monitoreo y logs con Log4J y LogBack](./Sesion-07)          | Usar Thymeleaf como motor de generación de vistas dinámicas.       |
-|    8   | [Project Lombok y MapStruct](./Sesion-08)                              | Usar Spring Data JPA para trabajar con bases de datos relacionales.|
+| Sesión | Tema                                                         |
+|--------|--------------------------------------------------------------|
+|    1   | [Construcción de proyectos con Maven](./Sesion-01)           |
+|    2   | [Patrones de diseño](./Sesion-02)                            |
+|    3   | [Introducción a Spring Boot](./Sesion-03)                    |
+|    4   | [Java Beans y la Inversión de Control](./Sesion-04)          |
+|    5   | [Conexión a base de datos con Spring Data JPA](./Sesion-05)  |
+|    6   | [Mensajeria de colas con JMS](./Sesion-06)                   | 
+|    7   | [Monitoreo y logs con Log4J y LogBack](./Sesion-07)          | 
+|    8   | [Project Lombok y MapStruct](./Sesion-08)                    | 
 
