@@ -1,67 +1,68 @@
-## Sesión 3: Anotaciones y Pruebas Unitarias con JUnit :heavy_check_mark:
+## Sesión 3: Introducción a Spring Boot
 
-<img src=".github/assets/img/indice.png" align="right" height="120" hspace="10">
+<img src=".github/assets/img/boot.png" align="right" height="120" hspace="10">
 <div style="text-align: justify;">
 
 ### 1. Objetivos :dart:
 
-- Distinguir los distintos usos de las anotaciones en las pruebas con JUnit y Mockito.
-- Identificar qué es JUnit
-- Aprender a crear dobles de prueba con Mockito.
+- Aprender qué es Spring Boot.
+- Usar Spring Initilizr para crear un proyecto Maven para Spring Boot.
+- Desarrollar y consumir un servicio web REST usando Spring MVC.
+
 
 ### 2. Contenido :blue_book:
 
-Una prueba tiene como objetivo evaluar la funcionalidad de una aplicación e identificar posibles errores. Dentro del mundo de las pruebas, el tipo más básico son las **pruebas unitarias**, las cuales se encargan de validar una funcionalidad única de una parte de nuestro código. 
+El desarrollo backend se encarga de diseñar la lógica y soluciones para la correcta ejecución de todas las acciones solicitadas en una aplicación. Podemos resumirlo como la programación de todo aquello que, como usuarios, no podemos ver de una aplicación pero que es esencial para el correcto funcionamiento de esta. 
 
-En Java existen varios frameworks para realizar pruebas unitarias. El más ampliamente utilizado es JUnit. 
+Para el desarrollo backend utilizando tecnología Java, existen varias herramientas que nos facilitan el trabajo. En este módulo conoceremos Spring, el framework de Java más utilizado para desarrollo backend.
 
 En este módulo aprenderemos:
 
-- Aprender qué es una prueba unitaria y los beneficios de estas durante el ciclo de vida del desarrollo de software.
-- Aplicar pruebas unitarias usando JUnit 5 para validar el correcto funcionamiento de una aplicación de forma automática.
+- Aprender qué es Spring Boot.
+- Aprender a desarrollar servicios REST y exponerlos usando Spring MVC.
 
 ---
 
-<img src=".github/assets/img/junit.png" align="right" height="90" hspace="10">
+<img src=".github/assets/img/boost.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: Pruebas con JUnit</ins>
+#### <ins>Tema 1: Proyecto Maven con Spring Initializr</ins>
 
-JUnit es un framework para realizar y automatizar pruebas de aplicaciones Java. Es decir, JUnit se sitúa en la fase de pruebas dentro del ciclo de Ingeniería del Software.
+Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerías que usarás.
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
 - [**`Reto 1`**](./Reto-01)
 
 ---
 
-<img src=".github/assets/img/mockito.jpg" align="right" height="90" hspace="10">
+<img src=".github/assets/img/spring-boot-controller.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 2: Dobles de pruebas con JUnit y Mockito.</ins>
+#### <ins>Tema 2: Creación de controladores de lectura con Spring MVC.</ins>
 
-Mockito sirve para crear Mocks, Spys, etc, de manera sencilla.
-
-Esta librería de Java permite simular el comportamiento de una clase de forma dinámica. De esta forma se crea un aislamiento de las dependencias con otras clases y sólo se probará la funcionalidad que se quiere probar. La simulación del comportamiento de una clase se realiza mediante los dobles.
-
+Spring MVC es el módulo de Spring que se encarga del manejo de peticiones HTTP (el protocolo que se usa en los servicios web REST). El framework define una serie de interfaces que siguen el patrón de diseño Strategy para todas las responsabilidades que deben ser manejadas por el framework. El objetivo de cada interface es ser simple y clara, para que sea fácil para los usuarios de Spring MVC (o sea, nosotros) crear nuestras propias implementaciones.
 
 - [**`EJEMPLO 2`**](./Ejemplo-02)
 - [**`Reto 2`**](./Reto-02)
 
 ---
 
-<img src=".github/assets/img/suite.png" align="right" height="90" hspace="10">
+<img src=".github/assets/img/update.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 3: Suites de pruebas.</ins>
+#### <ins>Tema 3: Cración y actualización de información.</ins>
 
-El concepto fundamental en estas herramientas es el caso de prueba (test case), y la suite de prueba (test suite). Los casos de prueba son clases o módulos que disponen de métodos para probar los métodos de una clase o módulo concreta/o. Así, para cada clase que quisiéramos probar definiríamos su correspondiente clase de caso de prueba. Mediante las suites podemos organizar los casos de prueba, de forma que cada suite agrupa los casos de prueba de módulos que están funcionalmente relacionados.
+REST (Representational State Transfer) es un conjunto de principios que indican una forma de programar servicios web que aprovechan al máximo las características del protocolo HTTP.
+
+Uno de los puntos más importantes de REST es el uso de los métodos HTTP de forma explícita. Este principio establece una correlación individual entre las operaciones CRUD (crear, leer, actualizar y borrar) y los métodos HTTP.
 
 - [**`EJEMPLO 3`**](./Ejemplo-03)
-  
----
+- [**`Reto 3`**](./Reto-03)
+
+---  
 
 ### 3. Postwork :memo:
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
 
-- [**`POSTWORK SESIÓN 3`**](./Postwork/)
+- [**`POSTWORK SESIÓN 4`**](./Postwork/)
 
 <br/>
 

@@ -1,153 +1,142 @@
-## Ejemplo 02: Pruebas unitarias con JUnit y Mockito
+## Ejemplo 02: Controladores de lectura con Spring MVC
 
 ### OBJETIVO
 
-- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
-- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
+- Aprender la forma de crear controladores de Spring usando su módulo web (Spring MVC).
+- Crear un primer servicio REST que regrese un recurso estático.
+- Consumir el servicio usando un navegador Web y con Postman.
 
 ### DESARROLLO
 
-Uno de los puntos más importantes al desarrollar una prueba unitaria es que esta debe validar un funcionamiento particular de una método o clase de forma aislada de otras funcionalidades; sin embargo, en una aplicación esto no siempre es fácil de lograr, ya que nuestras clases tienen relación y dependen a su vez de otras clases. Para poder aislar completamente los componentes y funcionalidades requeridos por una prueba unitaria existen varias técnicas, una de las más populares es el uso de **dobles de prueba** u objetos *mock*, lo cuales son objetos que sustituyen a las clases reales y a las cuales podemos definirles el comportamiento esperado.
+Una API utiliza ciertos protocolos para permitir la comunicación entre aplicaciones programadas en diferentes lenguajes de programación. Bien, acá es donde entran los servicios web, una tecnología que utiliza un conjunto de estándares y protocolos para intercambiar datos entre aplicaciones. En este sentido tenemos dos términos que usualmente son utilizados como sinónimos: REST y RESTful, estos definen características y/o principios de diseño que se deben seguir para programar servicios web.
 
-Es posible crear mocks manualmente, pero ya existen frameworks que pueden hacerlo por nosotros, estos permiten crear objetos mock en tiempo de ejecución y definir su comportamiento. *Mockito* es uno de los frameworks más ampliamente utilizados en Java para la creación de objetos mock.
+Es importante conocer e implementar bien estos principios de diseño para crear una API con las características necesarias para ser considerada RESTful. ¿Cómo sabemos que tan bien se implementan estos principios? El modelo de madurez de Richardson establece niveles para saber qué tan RESTful es una API. Van desde el nivel 0 hasta el nivel 3 donde el nivel 3 es el de mayor grado de madurez. 
+
+![](img/img_01.png)
+
+RESTful, por su lado, define un conjunto de características con las que debe cumplir un servicio REST. RESTful no solo indica que se debe cumplir con la arquitectura REST, sino también los tipos de operaciones y métodos HTTP que se deben implementar en cada operación para poder llevar a cabo un correcto manejo de los recursos (la información manejada para el software que expone los servicios RESTful).
+
+Las características de los servicios web RESTful:
+
+- Están asociados a la información.
+- Tiene cinco operaciones típicas: listar, crear, leer, actualizar y borrar.
+- Para las operaciones anteriores necesita de un método URI y HTTP.
+- El URI es un sustantivo que contiene el nombre del recurso.
+- El método HTTP es un verbo.
+- Suelen regresar la información en formato JSON.
+- Retornan códigos de respuesta HTML.
 
 
-#### Anotaciones básicas
+Spring MVC es el módulo de Spring que se encarga del manejo de peticiones HTTP (el protocolo que se usa en los servicios web REST). El framework define una serie de interfaces que siguen el patrón de diseño Strategy para todas las responsabilidades que deben ser manejadas por el framework. El objetivo de cada interface es ser simple y clara, para que sea fácil para los usuarios de Spring MVC (o sea, nosotros) crear nuestras propias implementaciones.
 
-Mockito es un framework que permite trabajar de muchas formas, pero la más limpia y sencilla es definir e inicializar los objetos mock usando anotaciones. Para lo cual Mockito proporciona dos anotaciones básicas:
-
-- `@Mock`: Se usa para indicar a Mockito que debe crear un doble de prueba del objeto decorado con esta anotación.
-- `@Spy`: Indica que además de crear el doble de prueba, realizaremos algunas validaciones o verificaciones sobre los métodos que se ejecutaron sobre este objeto. Esto se hace para comprobar que el flujo que siguió la ejecución de nuestra prueba efectivamente es el que estamos esperando.
-- `@InjectMocks`: Toma todos los objetos Mock creados y los inyecta de forma automática en el objeto que usaremos para ejecutar las pruebas.
-
+En este ejemplo implementarás tu primer controlador REST usando Spring MVC.
 
 #### Implementación
 
-Para este ejercicio modificaremos la calculadora que usamos en el ejemplo anterior para agregar un valor constante el cual obtendremos desde una base de datos usando un Data Access Object (DAO). Como no queremos probar la implementación del componente que se encarga de conectarse a la base de datos para obtener el valor, sino que la calculadora funciona correctamante usando ese valor, simularemos el objeto DAO usando un objeto Mock.
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
 
-Lo primero que debemos hacer es incluir las dependencias de JUnit y Mockito en nuestro proyecto. Esto lo hacemos colocando las siguientes línea en el archivo build.gradle, las cuales indican que debemos usar la dependencia de Junit jupiter solo en la etapa de pruebas:
-
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-```
-
-Como siguiente paso, definimos una interface del DAO que se encargará de leer el valor constante de la base de datos:
-
-```java
-
-public interface CalculadoraDao {
-    int findValorConstante();
-}
-
-```
-
-
-Ahora creamos una clase que contenga la siguiente lógica de sumas y restas. En este momento es igual a la `Calculadora` que desarrollamos antes:
-
-```java
-public class Calculadora{
-
-    public int suma(int a, int b) {
-        return a + b;
-    }
-
-    public int resta(int a, int b) {
-        return a - b;
-    }
-
-    public int multiplica(int a, int b) {
-        return a * b;
-    }
-}
-
-```
-
-Haremos una modificación a esta clase para que use el DAO en cada operación y sume el valor constante a cada operación:
-
-```java
-
-public class Calculadora {
-
-    private CalculadoraDao calculadoraDao;
-
-    public int suma(int a, int b) {
-        return a + b + calculadoraDao.findValorConstante();
-    }
-
-    public int resta(int a, int b) {
-        return a - b + calculadoraDao.findValorConstante();
-    }
-
-    public int multiplica(int a, int b) {
-        return a * b + calculadoraDao.findValorConstante();
-    }
-}
-
-```
-
-Ahora implementamos la clase de prueba. Como no tenemos aún la implementación del DAO crearemos un objeto mock que simule su funcionamiento. Con esto nos aseguramos de que la clase `Calculadora` funcione correctamente independientemente del funcionamiento del DAO.
-
-Para que JUnit sepa que Mockito deberá realizar algunas acciones en la prueba, decoramos la clase de prueba con la anotación `@ExtendWith(MockitoExtension.class)`:
-
-```java
-
-@ExtendWith(MockitoExtension.class)
-class CalculadoraTest {
-
-    @Mock
-    CalculadoraDao calculadoraDao;
-
-    @InjectMocks
-    Calculadora calculadora;
-
-
-    @BeforeEach
-    void setUp() {
-        given(calculadoraDao.findValorConstante()).willReturn(3);
-    }
-
-    @Test
-    @DisplayName("Prueba suma")
-    void sumaTest() {
-        int esperado = 8;
-        assertEquals(esperado, calculadora.suma(3, 2));
-    }
-
-    @Test
-    @DisplayName("Prueba resta")
-    void restaTest() {
-        int esperado = 4;
-        assertEquals(esperado, calculadora.resta(3, 2));
-    }
-
-    @Test
-    @DisplayName("Prueba multiplicación")
-    void multiplicaTest() {
-        int esperado = 9;
-        assertEquals(esperado, calculadora.multiplica(3, 2));
-    }
-}
-
-```
-
-
-Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
-
-![imagen](img/img_01.png)
-
-Debes ver el siguiente resultado en la consola del IDE:
+    Grupo, artefacto y nombre del proyecto.
+    Tipo de proyecto: **Maven**.
+    Lenguaje: **Java**.
+    Forma de empaquetar la aplicación: **jar**.
+    Versión de Java: **11** o superior.
 
 ![imagen](img/img_02.png)
+
+En la siguiente ventana elige Spring Web como la única dependencia del proyecto:
+
+![imagen](img/img_03.png)
+
+Presiona el botón `Finish`.
+
+Dentro del paquete del proyecto crearemos un subpaquete que contendrá los controladores de Spring MVC (los componentes que reciben y manejan las peticiones web dentro de la aplicación).
+
+Haz clic con el botón derecho del ratón sobre el paquete y en el menú que se muestra selecciona las opciones `New  -> Package`. Dale a este nuevo paquete el nombre de `controllers`.
+
+![imagen](img/img_04.png)
+
+Crea un segundo paquete llamado `model` a la misma altura que el paquete `controllers`. Al final debes tener dos paquetes adicionales:
+
+![imagen](img/img_05.png)
+
+Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta clase representará el modelo de los datos que regresará el servicio que crearemos en un momento. Esta será una clase sencilla que solo tendrá una propiedad de tipo `String`: `mensaje`. Además de esta propiedad la clase debe tener su método *setter* y su método *getter*:    
+
+```java
+public class Saludo {
+    private String mensaje;
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+}
+```
+
+Cuando alguien invoque esta clase le regresaremos una instancia nueva de esta clase con un valor establecido en su atributo mensaje. Este diseño se puede mejorar, pero para este ejemplo servirá.
+
+En el paquete `controller` crea una nueva clase llamada `SaludoController`. Esta clase implementará los servicios web REST que manejan a los recursos de tipo `Saludo`. Para indicar a Spring que este componente es un servicio REST debemos decorar la case con la anotación `@RestController`:
+
+```java
+@RestController
+public class SaludoController {
+
+}
+```
+
+Esta clase tendrá, en este momento, un  solo método o manejador de llamadas, el cual no recibirá ningún parámetro y regresará un recurso de tipo `Saludo` con un mensaje preestablecido.
+
+```java
+    public Saludo saluda(){
+
+        Saludo saludo = new Saludo();
+        saludo.setMensaje("¡¡Hola Mundo!!");
+
+        return saludo;
+    }
+```
+
+Para indicar que este método es un manejador de peticiones debemos indicar qué tipo de operaciones manejará (el verbo HTTP que soportará). Como en este caso solo se usará para leer información estática se usará el verbo **GET**. Spring en su módulo web (Spring MVC) proporciona una serie de anotaciones que permite indicar esto de una forma sencilla. En este caso la anotación que se usrá es `@GetMapping` a la cual hay que indicarle la URL de las peticiones que manejará. En este caso será la ruta `saludo`. El método completo queda de la siguiente forma:
+
+```java
+    @GetMapping("/saludo")
+    public Saludo saluda(){
+
+        Saludo saludo = new Saludo();
+        saludo.setMensaje("¡¡Hola Mundo!!");
+
+        return saludo;
+    }
+```
+
+Ejecuta la aplicación, en la consola del IDE debes ver un mensaje similar al siguiente:
+
+![imagen](img/img_06.png)
+
+Esto quiere decir que la aplicación se ejecutó correctamente y todo está bien configurado.
+
+Desde tu navegador entra en la siguiente ruta: [http://localhost:8080/saludo](http://localhost:8080/saludo). Debes ver una salida similar a la siguiente:
+
+![imagen](img/img_07.png)
+
+Dependiendo de tu navegador y de los plugins que tengas instalado, podrías ver el formato un poco diferente; lo importante es que veas el texto "**¡¡Hola Mundo!!**".
+
+Esto quiere decir que la aplicación ha funcionado de forma correcta.
+
+Ahora, consumiremos el servicio usando *Postman*, el cual es una herrmienta cuya finalidad principal es consumir servicios REST. Al abrir Postman debes ver una ventana similar a la siguiente:
+
+![imagen](img/img_08.png)
+
+Haz clic en la opción *Create a basic request*:
+
+![imagen](img/img_09.png)
+
+En la siguiente ventana coloca la misma URL de la petición que usaste en el navegador y presiona el botón `Send`:
+
+![imagen](img/img_10.png)
+
+Una vez que recibas la respuesta, debes ver una salida similar en el panel de respuestas:
+
+![imagen](img/img_11.png)

@@ -1,68 +1,69 @@
-## Sesión 4: Introducción a Spring Boot
+## Sesión 5: Java Beans y la Inversión de Control en Spring Boot :arrows_clockwise:
 
-<img src=".github/assets/img/boot.png" align="right" height="120" hspace="10">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" align="right" height="120" hspace="10">
 <div style="text-align: justify;">
 
 ### 1. Objetivos :dart:
 
-- Aprender qué es Spring Boot.
-- Usar Spring Initilizr para crear un proyecto Maven para Spring Boot.
-- Desarrollar y consumir un servicio web REST usando Spring MVC.
+- Identificar qué es un Java Bean
+- Usar Spring como mecanismo de inyección de dependencias
 
 
 ### 2. Contenido :blue_book:
 
-El desarrollo backend se encarga de diseñar la lógica y soluciones para la correcta ejecución de todas las acciones solicitadas en una aplicación. Podemos resumirlo como la programación de todo aquello que, como usuarios, no podemos ver de una aplicación pero que es esencial para el correcto funcionamiento de esta. 
+El Core de Spring (su módulo principal) es un poderoso mecanismo de inyección de dependencias, el cual es una de las formas principales de inversión de control. Como desarrolladores debemos colocar algunas anotaciones básicas para indicarle a Spring el uso que le daremos a un *Bean* o componente de nuestra aplicación, y Spring se encargará de crear una instancia de este componente e inyectarlo en todos los lugares en los que lo usemos. De esta forma, no nos preocupamos por la manera en la que el *Bean* es creado, inicializado y en cómo llega a las clases en donde se necesitan. 
 
-Para el desarrollo backend utilizando tecnología Java, existen varias herramientas que nos facilitan el trabajo. En este módulo conoceremos Spring, el framework de Java más utilizado para desarrollo backend.
+Al librarnos de los mecanismos de *cableado* de los elementos entre nuestras distintas clases, logramos centrarnos más en la lógica de negocio que debemos resolver. Además, esto trae un beneficio adicional: Si deseamos cambiar la implementación de un *Bean* por otra equivalente, podemos hacerlo sin ningún esfuerzo y sin reescribir o modificar todas las partes de nuestra aplicación en la que se usa ese componente; dejamos que sea Spring quien se encarga de eso.
 
 En este módulo aprenderemos:
 
-- Aprender qué es Spring Boot.
-- Aprender a desarrollar servicios REST y exponerlos usando Spring MVC.
+- Scope de los Beans en Spring
+- Configuración explícita de Beans para inyección de dependencias.
+- Configuración implícita de Beans para inyección de dependencias.
+- Inicialización de propiedades.
 
 ---
 
-<img src=".github/assets/img/boost.png" align="right" height="90" hspace="10">
+<img src=".github/assets/img/beans.jpeg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: Proyecto Maven con Spring Initializr</ins>
+#### <ins>Tema 1: ¿Qué son los Beans en Spring?</ins>
 
-Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerías que usarás.
+Los **Beans** en Spring Framework son los objetos que forman la columna vertebral de nuestras aplicaciones. Estos son manejados por el núcleo de inversión de control de Spring. Un **Bean** es automáticamente instanciado, inicializado, ensamblado y administrado por el contenedor de IoC de Spring.
+
+El trabajo con *Beans* es un cambio a la forma tradicional de programación en la que el programador es responsable de cada aspecto de un objeto; aquí permitimos que sea el framework quien controle a estos objetos, delegándole de esa forma parte de la responsabilidad de la aplicación.
+
+Crear e inyectar un *Bean* en Spring es muy sencillo, como lo veremos en el Ejemplo 1.
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
+
+---
+
+<img src=".github/assets/img/selection.jpg" align="right" height="90" hspace="10">
+
+#### <ins>Tema 2: Configuración implícita de Beans para inyección de dependencias.</ins>
+
+Si bien es posible inicializar y configurar los *Beans* de forma explícita (y esto es algo muy común cuando deseamos modificar la configuración por default proporcionada por los distintos componentes ya que proporciona el Framework de Spring) cuando creamos nuestras propias clases podemos ahorrarnos este trabajo al permitir que Spring configure e inicialice de forma implícita los objetos creados a partir de nuestras clases. En el [segundo ejemplo](./Ejemplo-02) veremos cómo hacer esto, y tendrás como [primer reto](./Reto-01) el modificar el scope de uno de estos objetos.
+
+- [**`EJEMPLO 2`**](./Ejemplo-02)
 - [**`Reto 1`**](./Reto-01)
 
 ---
 
-<img src=".github/assets/img/spring-boot-controller.png" align="right" height="90" hspace="10">
+<img src=".github/assets/img/preparation.jpg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 2: Creación de controladores de lectura con Spring MVC.</ins>
+#### <ins>Tema 3: Inicialización de propiedades.</ins>
 
-Spring MVC es el módulo de Spring que se encarga del manejo de peticiones HTTP (el protocolo que se usa en los servicios web REST). El framework define una serie de interfaces que siguen el patrón de diseño Strategy para todas las responsabilidades que deben ser manejadas por el framework. El objetivo de cada interface es ser simple y clara, para que sea fácil para los usuarios de Spring MVC (o sea, nosotros) crear nuestras propias implementaciones.
-
-- [**`EJEMPLO 2`**](./Ejemplo-02)
-- [**`Reto 2`**](./Reto-02)
-
----
-
-<img src=".github/assets/img/update.png" align="right" height="90" hspace="10">
-
-#### <ins>Tema 3: Cración y actualización de información.</ins>
-
-REST (Representational State Transfer) es un conjunto de principios que indican una forma de programar servicios web que aprovechan al máximo las características del protocolo HTTP.
-
-Uno de los puntos más importantes de REST es el uso de los métodos HTTP de forma explícita. Este principio establece una correlación individual entre las operaciones CRUD (crear, leer, actualizar y borrar) y los métodos HTTP.
+En algunas ocasiones tendremos que modificar algunos valores de los *Beans* de la aplicación, una vez que todo se ha configurado, ya sea porque necesitemos que otros objetos estén inicializados o porque hay valores que solo podremos obtener en tiempo de ejecución. Para eso, en el [tercer ejemplo](./Ejemplo-03) veremos cómo podemos realizar la inicialización de valores una vez que nuestros *Beans* han sido creados.
 
 - [**`EJEMPLO 3`**](./Ejemplo-03)
-- [**`Reto 3`**](./Reto-03)
 
----  
+---
 
 ### 3. Postwork :memo:
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
 
-- [**`POSTWORK SESIÓN 4`**](./Postwork/)
+- [**`POSTWORK SESIÓN 5`**](./Postwork/)
 
 <br/>
 

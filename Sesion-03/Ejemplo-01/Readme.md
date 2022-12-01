@@ -1,105 +1,69 @@
-## Ejemplo 01: Pruebas unitarias con JUnit 
+## Ejemplo 01: Proyecto Maven con Spring Initializr
 
 ### OBJETIVO
 
-- Aprender a crear y ejecutar una prueba usando JUnit 
+- Crear un proyecto Maven usando Spring Initializr.
+- Compilar, empaquetar y ejecutar la aplicación o proyecto generados desde la línea de comandos.
 
 ### DESARROLLO
 
-JUnit es uno de los frameworks de pruebas más populares en el ecosistema de la tecnología Java. La versión 5 de JUnit contiene muchas características útiles que nos ayudan a cumplir con el objetivo de desarrollar muchos tipos distintos de pruebas unitarias y de integración. 
+Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerias que usarás.
 
-#### Arquitectura
-
-JUnit 5 está compuesto por una variedad de módulos diferentes divididos en tres módulos:
-
-- **JUnit Platform**: La plataforma es el módulo responsable de ejecutar las pruebas en la JVM. Define una serie de interfaces poderosas entre JUnit y sus clientes, como las herramientas de compilación (Gradle, Maven) o los IDEs.
-- **JUnit Jupiter**: Es el módulo que contiene los modelos y extensiones de JUnit. Este será el módulo que usaremos para escribir nuestras pruebas.
-- **JUnit Vintage**: Soporta la ejecución de pruebas basadas en JUnit 3 y 4 dentro de un entorno JUnit 5. Sirve mucho para cuando tenemos aplicaciones o código legado.
-
-#### Anotaciones básicas
-
-- `@Test`: Esta es la anotación que más usarás de JUnit. Indica que un método debe tratarse como un caso de una prueba unitaria. JUnit ejecuta todos los métodos habilitados que contengan esta anotación.
-- `@Disabled`: Indica que un caso de prueba particular debe ignorarse, y por lo tanto no se ejecutará.
-- `@BeforeEach`: Indica que el método anotado será ejecutado antes de cada uno de los métodos de prueba. Se usa cuando queremos inicializar y reinicializar información o configuración antes de cada prueba.
-- `@AfterEach`: Indica que el método anotado se ejecutará después de cada uno de los métodos de prueba. Se usa cuando queremos limpiar o liberar algún recurso después de cada prueba.
-- `@BeforeAll`: Indica que el método anotado se ejecutará antes de ejecutar los métodos de prueba. Se ejecuta una sola vez durante toda la prueba.
-- `@AfterAll`: Indica que el método anotado se ejecutará después de que se haya terminado la ejecución de todos los métodos de prueba. Se ejecuta una solo vez durante toda la prueba.
+Su objetivo es ayudarnos a generar esa estructura inicial del proyecto de una forma fácil y rápida para que podamos comenzar el desarrollo en el menor tiempo posible, teniendo la confianza de que contamos con una estructura correcta.
 
 
 #### Implementación
 
-Lo primero que debemos hacer es incluir la dependencia de JUnit en nuestro proyecto. Esto lo hacemos colocando la siguiente línea en el archivo `build.gradle`, las cuales indican que debemos usar la dependencia de Junit Jupiter solo en la etapa de pruebas:
+Entra al sitio de [Spring Initializr](https://start.spring.io/). Ahí verás una sola página dividida en dos secciones. Comienza llenando la información de la sección del lado izquierdo. Selecciona:
+  - Maven Proyect (no te preocupes, no es necesario que tengas Maven instalado).
+  - Lenguaje: **Java**.
+  - Versión de Spring Boot, la versión estable más reciente
+  - Grupo, artefacto y nombre del proyecto.
+  - Forma de empaquetar la aplicación: **jar**.
+  - Versión de Java: **11** o **17**.
 
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.3.0</version>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-```
+![](img/img_01.png)
 
+En la sección de la derecha (las dependencias) presiona el botón `Add dependencies` y en la ventana que se abre busca la dependencia `Web` o `Spring Web`.
 
-Ahora creamos una clase que contenga la siguiente lógica de sumas y restas.
+![](img/img_02.png)
 
-```java
-public class Calculadora{
+Selecciona la dependencia `Spring Web` y con eso debes verla en la lista de las dependencias del proyecto:
 
-    public int suma(int a, int b) {
-        return a + b;
-    }
+![imagen](img/img_03.png)
 
-    public int resta(int a, int b) {
-        return a - b;
-    }
+Presiona el botón "GENERATE" (o presiona `Ctrl` + `Enter` en tu teclado) para que comience la descarga del proyecto.
 
-    public int multiplica(int a, int b) {
-        return a * b;
-    }
-}
+![imagen](img/img_04.png)
 
-```
+Descomprime el archivo `zip` descargado, el cual tiene más o menos el siguiente contenido.
 
-Ahora implementamos la clase de prueba que nos permitirá verificar su funcionamiento:
+![imagen](img/img_05.png)
 
-```java
-class CalculadoraTest {
+Abre una terminal o línea de comandos en el directorio que acabas de descomprimir y ejecuta los siguientes comandos, los cuales se ejecutan en Maven gracias a un *wrapper* que se distribuye dentro del paquete que acabas de descargar:
 
-    private Calculadora calculadora = new Calculadora();
+        mvn clean
+      
+7. La salida del comando anterior debe ser parecida a la siguiente:
 
-    @Test
-    @DisplayName("Prueba suma")
-    void sumaTest() {
-        int esperado = 5;
+![imagen](img/img_06.png)
 
-        assertEquals(esperado, calculadora.suma(3, 2));
-    }
+Una vez que todo está compilado, ejecutamos la aplicación
+        
+Debes obtener una salida similar a la siguiente:
 
-    @Test
-    @DisplayName("Prueba resta")
-    void restaTest() {
-        int esperado = 1;
+![imagen](img/img_07.png)
 
-        assertEquals(esperado, calculadora.resta(3, 2));
-    }
+Esto indica que la aplicación se está ejecutando en el puerto **8080**. Como no hemos colocado ningún contenido en la aplicación no hay mucho que mostrar pero podremos comprobar que la aplicación está bien configurada, que todos los elementos necesarios están instalados y configurados y que nuestra aplicación se ejecuta de forma correcta:
 
-    @Test
-    @DisplayName("Prueba multiplicación")
-    void multiplicaTest() {
-        int esperado = 6;
+      http://localhost:8080
+      
+Una vez que el sitio cargue, debes ver una pantalla como la siguiente:
 
-        assertEquals(esperado, calculadora.multiplica(3, 2));
-    }
-}
-```
+![imagen](img/img_08.png)
 
+Detén la aplicación presionando `Ctrl + C` en la terminal en donde levantaste la aplicación.
 
-Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
+Puesto que la aplicación está completamente contenida en un archivo `jar`, también es posible ejecutarla como vimos en las sesiones anteirores.
 
-![imagen](img/img_01.png)
-
-Debes ver el siguiente resultado en la consola del IDE:
-
-![imagen](img/img_02.png)
+¡¡Felicidades, acabas de ejecutar tu primer "Hola mundo" con Spring Boot!!

@@ -1,142 +1,128 @@
-## Ejemplo 02: Controladores de lectura con Spring MVC
+## Ejemplo 02: Configuración implícita de Beans para inyección de dependencias.
 
 ### OBJETIVO
 
-- Aprender la forma de crear controladores de Spring usando su módulo web (Spring MVC).
-- Crear un primer servicio REST que regrese un recurso estático.
-- Consumir el servicio usando un navegador Web y con Postman.
+- Crear un Bean de Spring de forma implícita.
+- Inyectar el Bean creado en otras clases para su uso.
+
 
 ### DESARROLLO
 
-Una API utiliza ciertos protocolos para permitir la comunicación entre aplicaciones programadas en diferentes lenguajes de programación. Bien, acá es donde entran los servicios web, una tecnología que utiliza un conjunto de estándares y protocolos para intercambiar datos entre aplicaciones. En este sentido tenemos dos términos que usualmente son utilizados como sinónimos: REST y RESTful, estos definen características y/o principios de diseño que se deben seguir para programar servicios web.
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
 
-Es importante conocer e implementar bien estos principios de diseño para crear una API con las características necesarias para ser considerada RESTful. ¿Cómo sabemos que tan bien se implementan estos principios? El modelo de madurez de Richardson establece niveles para saber qué tan RESTful es una API. Van desde el nivel 0 hasta el nivel 3 donde el nivel 3 es el de mayor grado de madurez. 
+  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
+  - Lenguaje: **Java**.
+  - Versión de Spring Boot, la versión estable más reciente
+  - Grupo, artefacto y nombre del proyecto.
+  - Forma de empaquetar la aplicación: **jar**.
+  - Versión de Java: **11** o superior.
 
-![](img/img_01.png)
+![](img/img_001.png)
 
-RESTful, por su lado, define un conjunto de características con las que debe cumplir un servicio REST. RESTful no solo indica que se debe cumplir con la arquitectura REST, sino también los tipos de operaciones y métodos HTTP que se deben implementar en cada operación para poder llevar a cabo un correcto manejo de los recursos (la información manejada para el software que expone los servicios RESTful).
+No selecciones ninguna dependencia, no las necesitaremos en este ejemplo.
 
-Las características de los servicios web RESTful:
+Presiona el botón "Finish".
 
-- Están asociados a la información.
-- Tiene cinco operaciones típicas: listar, crear, leer, actualizar y borrar.
-- Para las operaciones anteriores necesita de un método URI y HTTP.
-- El URI es un sustantivo que contiene el nombre del recurso.
-- El método HTTP es un verbo.
-- Suelen regresar la información en formato JSON.
-- Retornan códigos de respuesta HTML.
+Ahora, crea dos paquetes dentro de la estructura creada por IntelliJ. El primer paquete se llamará `model` y el segundo `service`:
 
+![](img/img_002.png)
 
-Spring MVC es el módulo de Spring que se encarga del manejo de peticiones HTTP (el protocolo que se usa en los servicios web REST). El framework define una serie de interfaces que siguen el patrón de diseño Strategy para todas las responsabilidades que deben ser manejadas por el framework. El objetivo de cada interface es ser simple y clara, para que sea fácil para los usuarios de Spring MVC (o sea, nosotros) crear nuestras propias implementaciones.
-
-En este ejemplo implementarás tu primer controlador REST usando Spring MVC.
-
-#### Implementación
-
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
-
-    Grupo, artefacto y nombre del proyecto.
-    Tipo de proyecto: **Maven**.
-    Lenguaje: **Java**.
-    Forma de empaquetar la aplicación: **jar**.
-    Versión de Java: **11** o superior.
-
-![imagen](img/img_02.png)
-
-En la siguiente ventana elige Spring Web como la única dependencia del proyecto:
-
-![imagen](img/img_03.png)
-
-Presiona el botón `Finish`.
-
-Dentro del paquete del proyecto crearemos un subpaquete que contendrá los controladores de Spring MVC (los componentes que reciben y manejan las peticiones web dentro de la aplicación).
-
-Haz clic con el botón derecho del ratón sobre el paquete y en el menú que se muestra selecciona las opciones `New  -> Package`. Dale a este nuevo paquete el nombre de `controllers`.
-
-![imagen](img/img_04.png)
-
-Crea un segundo paquete llamado `model` a la misma altura que el paquete `controllers`. Al final debes tener dos paquetes adicionales:
-
-![imagen](img/img_05.png)
-
-Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta clase representará el modelo de los datos que regresará el servicio que crearemos en un momento. Esta será una clase sencilla que solo tendrá una propiedad de tipo `String`: `mensaje`. Además de esta propiedad la clase debe tener su método *setter* y su método *getter*:    
+Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta representa al Bean que inyectaremos más adelante en este ejemplo:
 
 ```java
 public class Saludo {
-    private String mensaje;
+    private final String nombre;
 
-    public String getMensaje() {
-        return mensaje;
+    public Saludo() {
+        this.nombre = "Beto";
     }
 
-    public void setMensaje(String mensaje) {
-        this.mensaje = mensaje;
+    public String getNombre() {
+        return nombre;
     }
 }
 ```
 
-Cuando alguien invoque esta clase le regresaremos una instancia nueva de esta clase con un valor establecido en su atributo mensaje. Este diseño se puede mejorar, pero para este ejemplo servirá.
+Fíjate como `Saludo` tiene una sola propiedad llamada `nombre` que hemos marcado como `final`. Esto quiere decir que una vez que se establezca el valor de esa propiedad no podrá ser modificado. Aunque esto no es obligatorio sí es una buena práctica. 
 
-En el paquete `controller` crea una nueva clase llamada `SaludoController`. Esta clase implementará los servicios web REST que manejan a los recursos de tipo `Saludo`. Para indicar a Spring que este componente es un servicio REST debemos decorar la case con la anotación `@RestController`:
+También, creamos un constructor en donde inicializamos el valor de `nombre` a un valor fijo. También tenemos el método `getter` de `nombre`. Debido a que el valor de `nombre` no puede ser cambiado una vez que se ha establecido, no es necesario proporcionar un `setter`.
+
+Como queremos que `Saludo` sea manejado como un Bean de Spring, demos indicarlo de alguna forma. Para ello usaremos una de las anotaciones de estereotipos de Spring: `@Component`. Esta anotación nos ayuda a indicar que queremos que Spring gestione las instancias de `Saludo` y que las inyecte en los lugares donde la necesitemos.
+
+Dentro del paquete `service` crea una clase llamada `SaludoService`. Esta clase será en la que inyectaremos la instancia de `Saludo`. Como esta clase será interpretada como un **servicio** debemos decorarla con la anotación `@Service`, otra de las anotaciones de estereotipos de Spring:
 
 ```java
-@RestController
-public class SaludoController {
+@Service
+public class SaludoService {
 
 }
 ```
 
-Esta clase tendrá, en este momento, un  solo método o manejador de llamadas, el cual no recibirá ningún parámetro y regresará un recurso de tipo `Saludo` con un mensaje preestablecido.
+A continuación, indicamos que este servicio usará una instancia de `Saludo` y que Spring debe inyectarlo (ya que `Saludo` ahora es una clase manejada por Spring). Para eso repetimos la fórmula del ejemplo anterior: Colocamos un referencia a una instancia de `Saludo` y un constructor que reciba esta instancia, decoramos el constructor con `@Autowired`:
 
 ```java
-    public Saludo saluda(){
+@Service
+public class SaludoService {
 
-        Saludo saludo = new Saludo();
-        saludo.setMensaje("¡¡Hola Mundo!!");
+    private final Saludo saludo;
 
-        return saludo;
+    @Autowired
+    public SaludoService(Saludo saludo) {
+        this.saludo = saludo;
     }
+}
 ```
 
-Para indicar que este método es un manejador de peticiones debemos indicar qué tipo de operaciones manejará (el verbo HTTP que soportará). Como en este caso solo se usará para leer información estática se usará el verbo **GET**. Spring en su módulo web (Spring MVC) proporciona una serie de anotaciones que permite indicar esto de una forma sencilla. En este caso la anotación que se usrá es `@GetMapping` a la cual hay que indicarle la URL de las peticiones que manejará. En este caso será la ruta `saludo`. El método completo queda de la siguiente forma:
+Para terminar con `SaludoService`, agregamos un método `saluda` que haga uso de esta instancia:
 
 ```java
-    @GetMapping("/saludo")
-    public Saludo saluda(){
-
-        Saludo saludo = new Saludo();
-        saludo.setMensaje("¡¡Hola Mundo!!");
-
-        return saludo;
-    }
+public String saluda(){
+  return "Hola " + saludo.getNombre();
+}
 ```
 
-Ejecuta la aplicación, en la consola del IDE debes ver un mensaje similar al siguiente:
+Hagamos uso de esta Bean en otra parte de nuestra aplicación.
 
-![imagen](img/img_06.png)
+vamos a la clase principal, `Sesion5Application`, la cual está decorada con la anotación `@SpringBootApplication`. Es en esta clase donde le indicaremos a Spring que debe inyectar la instancia de `SaludoService`. Para eso declararemos un atributo de tipo `SaludoService`, de la misma forma que en el ejemplo anterior:
 
-Esto quiere decir que la aplicación se ejecutó correctamente y todo está bien configurado.
+```java
+@SpringBootApplication
+public class Sesion5Application {
 
-Desde tu navegador entra en la siguiente ruta: [http://localhost:8080/saludo](http://localhost:8080/saludo). Debes ver una salida similar a la siguiente:
+   private final SaludoService saludoService;
 
-![imagen](img/img_07.png)
+    public Sesion5Application(@Autowired SaludoService saludoService) {
+        this.saludoService = saludoService;
+    }
+}
+```
 
-Dependiendo de tu navegador y de los plugins que tengas instalado, podrías ver el formato un poco diferente; lo importante es que veas el texto "**¡¡Hola Mundo!!**".
+Haremos es hacer que `Sesion5Application` implemente la interface `CommandLineRunner`, y en su método `run` imprimiremos el valor del atributo `nombre` de saludo, usando la instancia de `SaludoService`:
 
-Esto quiere decir que la aplicación ha funcionado de forma correcta.
+```java
+@SpringBootApplication
+public class Sesion5Application implements CommandLineRunner {
 
-Ahora, consumiremos el servicio usando *Postman*, el cual es una herrmienta cuya finalidad principal es consumir servicios REST. Al abrir Postman debes ver una ventana similar a la siguiente:
+    private final SaludoService saludoService;
 
-![imagen](img/img_08.png)
+    public Sesion5Application(@Autowired SaludoService saludoService) {
+        this.saludoService = saludoService;
+    }
 
-Haz clic en la opción *Create a basic request*:
+    public static void main(String[] args) {
+        SpringApplication.run(Sesion5Application.class, args);
+    }
 
-![imagen](img/img_09.png)
 
-En la siguiente ventana coloca la misma URL de la petición que usaste en el navegador y presiona el botón `Send`:
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println(saludoService.saluda());
+    }
+}
 
-![imagen](img/img_10.png)
+```
 
-Una vez que recibas la respuesta, debes ver una salida similar en el panel de respuestas:
+Si ahora ejecutamos la aplicación, debemos obtener la siguiente salida en la consola:
 
-![imagen](img/img_11.png)
+![](img/img_003.png)
+

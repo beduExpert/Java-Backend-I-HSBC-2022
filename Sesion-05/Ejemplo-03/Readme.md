@@ -1,161 +1,143 @@
-## Ejemplo 03: Inicialización de propiedades
+## Ejemplo 03: Suites de pruebas
 
 ### OBJETIVO
 
-- Inicializar los valores de un objeto adminsitrado por Spring, después de que este ha sido creado.
+- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
+- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
 
 
 ### DESARROLLO
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+Cuando comenzamos a desarrollar un número de pruebas, en algunas ocasiones querremos agruparlas de una forma lógica en la que tengan sentido y ejecutarlas en conjunto y de forma independiente a las demás pruebas que podemos tener en el sistema. A esta agrupación lógica de pruebas se le conoce con el nombre de **Suite de pruebas**
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+JUnit proporciona las siguientes anotaciones para crear conjuntos de pruebas:
 
-No selecciones ninguna dependencia, no las necesitaremos en este ejemplo.
+- `@Suite`: Indica que la clase en la que se coloca la anotación servirá como una clase de "configuración" para la suite de pruebas. Junto con esta anotación debe colocarse alguna de las siguientes.
+- `@SelectPackages`: Indica en qué paquete se encuentran las clases que queremos que se ejecuten como parte de la suite de pruebas.
+- `@SelectClasses`: Indica qué clases son las que se ejecutarán como parte de la suite de pruebas.
 
-Presiona el botón "Finish".
+Para definir una suite de prueba debemos elegir una de las dos últimas anotaciones anteriores y colocarla, con sus valores respectivos, en una clase vacía. No es necesario que esta clase tenga ningún código, ya que su único objetivo es que tengamos un lugar para colocar la anotación.
 
-Ahora, crea dos paquetes dentro de la estructura creada por IntelliJ. El primer paquete se llamará `model` y el segundo `service`:
 
-![](img/img_002.png)
+#### Implementación
 
-Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta representa al Bean que inyectaremos más adelante en este ejemplo:
+Para incluir las suites de pruebas en el proyecto debemos agregar una dependencia adicional en el archivo `build.grade`:
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-engine</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+    </dependencies>
+```
+
+Para este ejercicio modificaremos la clase de prueba de la calculadora del primer ejercicio. Dejaremos esta clase vacía y crearemos una clase especial para validar cada una de las operaciones. Así que al final tendremos 5 clases.
+
+La primera será para la operación de **suma**:
 
 ```java
-public class Saludo {
-    private String nombre;
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+class CalculadoraSumaTest {
+
+    static Calculadora calculadora;
+
+    @BeforeAll
+    static void setup() {
+        calculadora = new Calculadora();
+
     }
 
-    public String getNombre() {
-        return nombre;
+    @Test
+    @DisplayName("Prueba suma")
+    void sumaTest() {
+        int esperado = 5;
+        assertEquals(esperado, calculadora.suma(3, 2));
     }
 }
+  
 ```
 
-Este `Saludo` no es como los anteriores, ya que no hemos establecido el valor de la propiedad `nombre`. Además, hemos eliminado y constructor y hemos agregado un método `setter`. Esto es porque ahora modificaremos el valor del nombre una vez que el objeto haya sido inyectado en el servicio correspondiente.
-
-Como queremos que `Saludo` sea manejado como un Bean de Spring, lo indicamos con la anotación `@Component`. 
+La segunda será para la operación de **resta**:
 
 
 ```java
-@Component
-public class Saludo {
-    private String nombre;
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+class CalculadoraRestaTest {
+
+    static Calculadora calculadora;
+
+    @BeforeAll
+    static void setup() {
+        calculadora = new Calculadora();
+
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-}
-
-```
-
-Dentro del paquete `service` crea una clase llamada `SaludoService`. Esta clase usará la instancia de `Saludo` y será la responsable de configurar el nombre que se usará en esa instancia. Como esta clase será interpretada como un **servicio** debemos decorarla con la anotación `@Service`, otra de las anotaciones de estereotipos de Spring:
-
-```java
-@Service
-public class SaludoService {
-
-}
-```
-
-A continuación, indicamos que este servicio usa la instancia de `Saludo` y que Spring debe inyectarlo:
-
-```java
-@Service
-public class SaludoService {
-
-    private final Saludo saludo;
-
-    @Autowired
-    public SaludoService(Saludo saludo) {
-        this.saludo = saludo;
-    }
-}
-```
-
-Para terminar con `SaludoService`, agregamos un método `saluda` que haga uso de esta instancia:
-
-```java
-public String saluda(){
-  return "Hola " + saludo.getNombre();
-}
-```
-
-Si intentáramos ejecutar la aplicación de esta forma obtendriamos "Hola null", ya que el valor de `nombre` no ha sido inicializado (es una valor nulo).
-
-![](img/img_001.png)
-
-Como no podemos (o queremos) crear directamente la instancia de `Saludo` dejaremos que `SaludoService` establezca el valor de `nombre`. Para ello crearemos un método de inicialización el cual se ejecutará una vez que se haya creado la instancia de `SaludoService` y se haya inyectado `Saludo`. 
-
-```java
-    public void init(){
-        saludo.setNombre("Beto");
-    }
-```
-
-Para indicarle a Spring que debe invocar este método una vez que se hayan inicializado los Beans, lo decoramos con la anotación `@PostConstruct`
-
-```java
-    @PostConstruct
-    public void init(){
-        saludo.setNombre("Beto");
-    }
-```
-
-Hagamos uso de esta Bean en otra parte de nuestra aplicación.
-
-vamos a la clase principal, `Sesion5Application`, la cual está decorada con la anotación `@SpringBootApplication`. Es en esta clase donde le indicaremos a Spring que debe inyectar la instancia de `SaludoService`. Para eso declararemos un atributo de tipo `SaludoService`, de la misma forma que en el ejemplo anterior:
-
-```java
-@SpringBootApplication
-public class Sesion5Application {
-
-   private final SaludoService saludoService;
-
-    public Sesion5Application(@Autowired SaludoService saludoService) {
-        this.saludoService = saludoService;
-    }
-}
-```
-
-Haremos es hacer que `Sesion5Application` implemente la interface `CommandLineRunner`, y en su método `run` imprimiremos el valor del atributo `nombre` de saludo, usando la instancia de `SaludoService`:
-
-```java
-@SpringBootApplication
-public class Sesion5Application implements CommandLineRunner {
-
-    private final SaludoService saludoService;
-
-    public Sesion5Application(@Autowired SaludoService saludoService) {
-        this.saludoService = saludoService;
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Sesion5Application.class, args);
-    }
-
-
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println(saludoService.saluda());
+    @Test
+    @DisplayName("Prueba resta")
+    void restaTest() {
+        int esperado = 1;
+        assertEquals(esperado, calculadora.resta(3, 2));
     }
 }
 
 ```
 
-Si ahora ejecutamos la aplicación, debemos obtener la siguiente salida en la consola:
+La tercera para la operación de **multiplicación**:
 
-![](img/img_002.png)
+```java
 
+class CalculadoraMultiplicaTest {
+
+    static Calculadora calculadora;
+
+    @BeforeAll
+    static void setup() {
+        calculadora = new Calculadora();
+    }
+
+    @Test
+    @DisplayName("Prueba multiplicación")
+    void multiplicaTest() {
+        int esperado = 6;
+        assertEquals(esperado, calculadora.multiplica(3, 2));
+    }
+}
+
+```
+
+La cuarta para la operación de **división**:
+
+Y finalmente la quinta clase. Esta será la que usaremos para crear la suite de pruebas y en la que indicaremos qué clases serán las que incluiremos en el el conjunto. Para eso usaremos una clase que no tendrá ningún contenido y pondremos, además de la anotación `@Suite` que es obligatoria, la anotación `@SelectClasses` en la cual pasaremos como valor un arreglo con todas las clases que queremos que se incluyan en el conjunto de pruebas. Que para este ejemplo son las cuatro que ya hemos creado:
+
+```java
+
+@Suite
+@SelectClasses({CalculadoraSumaTest.class, CalculadoraRestaTest.class, CalculadoraMultiplicaTest.class, CalculadoraDivideTest.class})
+class CalculadoraTest {
+
+}
+
+```
+
+
+Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
+
+![imagen](img/img_01.png)
+
+Debes ver el siguiente resultado en la consola del IDE:
+
+![imagen](img/img_02.png)

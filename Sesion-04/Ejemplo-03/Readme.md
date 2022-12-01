@@ -1,138 +1,161 @@
-## Ejemplo 03: Método POST para creación y actualización de información
+## Ejemplo 03: Inicialización de propiedades
 
 ### OBJETIVO
 
-- Aprender la forma en la que Spring MVC permite recibir objetos complejos (objetos con múltiples atributos de varios tipos)
+- Inicializar los valores de un objeto adminsitrado por Spring, después de que este ha sido creado.
+
 
 ### DESARROLLO
 
-REST (Representational State Transfer) es un conjunto de principios que indican una forma de programar servicios web que aprovechan al máximo las características del protocolo HTTP.    
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
 
-Uno de los puntos más importantes de REST es el uso de los métodos HTTP de forma explícita. Este principio establece una correlación individual entre las operaciones CRUD (crear, leer, actualizar y borrar) y los métodos HTTP. Según esta correspondencia:
+  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
+  - Lenguaje: **Java**.
+  - Versión de Spring Boot, la versión estable más reciente
+  - Grupo, artefacto y nombre del proyecto.
+  - Forma de empaquetar la aplicación: **jar**.
+  - Versión de Java: **11** o superior.
 
+No selecciones ninguna dependencia, no las necesitaremos en este ejemplo.
 
-![imagen](img/img_01.png)
+Presiona el botón "Finish".
 
-Hasta el momento has aprendido a usar el métod **GET** para obtener recursos. En este ejemplo aprenderás a usar los dos siguientes métodos HTTP: **POST** para la creación de un nuevo recurso en el servidor y **PUT** para la actualización de ese recurso. 
+Ahora, crea dos paquetes dentro de la estructura creada por IntelliJ. El primer paquete se llamará `model` y el segundo `service`:
 
+![](img/img_002.png)
 
-#### Implementación
-
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
-
-    Grupo, artefacto y nombre del proyecto.
-    Tipo de proyecto: **Maven**.
-    Lenguaje: **Java**.
-    Forma de empaquetar la aplicación: **jar**.
-    Versión de Java: **11** o superior.
-
-![imagen](img/img_02.png)
-
-En la siguiente ventana elige Spring Web como la única dependencia del proyecto:
-
-![imagen](img/img_03.png)
-
-Presiona el botón `Finish`.
-
-Dentro del paquete del proyecto crearemos un subpaquete que contendrá los controladores de Spring MVC.
-
-Haz clic con el botón derecho del ratón sobre el paquete y en el menú que se muestra selecciona las opciones `New  -> Package`. Dale a este nuevo paquete el nombre de `controllers`.
-
-![imagen](img/img_04.png)
-
-Crea un segundo paquete llamado `model` a la misma altura que el paquete `controllers`. Al final debes tener dos paquetes adicionales:
-
-![imagen](img/img_05.png)
-
-Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta clase representará el modelo de los datos que regresará el servicio que crearemos en un momento. Esta será una clase sencilla que tendrá tres propiedades, las primeas dos de tipo `String`: `mensaje` y `nombre`, y la tercera será de tipo `int`: `edad`. Además de estas propiedades la clase debe tener sus métodos **setter** y **getter**:
+Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta representa al Bean que inyectaremos más adelante en este ejemplo:
 
 ```java
 public class Saludo {
-    private String mensaje;
     private String nombre;
-    private int edad;
-
-    public String getMensaje() {
-        return mensaje;
-    }
-
-    public void setMensaje(String mensaje) {
-        this.mensaje = mensaje;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
+    public String getNombre() {
+        return nombre;
     }
 }
 ```
-En el paquete `controller` crea una nueva clase llamada `SaludoController`. Esta clase implementará los servicios web REST que manejan a los recursos de tipo `Saludo`. Para indicar a Spring que este componente es un servicio REST debemos decorar la case con la anotación `@RestController`:
+
+Este `Saludo` no es como los anteriores, ya que no hemos establecido el valor de la propiedad `nombre`. Además, hemos eliminado y constructor y hemos agregado un método `setter`. Esto es porque ahora modificaremos el valor del nombre una vez que el objeto haya sido inyectado en el servicio correspondiente.
+
+Como queremos que `Saludo` sea manejado como un Bean de Spring, lo indicamos con la anotación `@Component`. 
+
 
 ```java
-@RestController
-public class SaludoController {
+@Component
+public class Saludo {
+    private String nombre;
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+}
+
+```
+
+Dentro del paquete `service` crea una clase llamada `SaludoService`. Esta clase usará la instancia de `Saludo` y será la responsable de configurar el nombre que se usará en esa instancia. Como esta clase será interpretada como un **servicio** debemos decorarla con la anotación `@Service`, otra de las anotaciones de estereotipos de Spring:
+
+```java
+@Service
+public class SaludoService {
 
 }
 ```
 
-Esta clase tendrá un solo método o manejador de llamadas, el cual recibirá un parámetro de tipo `Saludo` y regresará también ese mismo recurso de tipo `Saludo` con un mensaje preestablecido.
+A continuación, indicamos que este servicio usa la instancia de `Saludo` y que Spring debe inyectarlo:
 
 ```java
-public Saludo saluda(Saludo saludo){
-    return saludo;
+@Service
+public class SaludoService {
+
+    private final Saludo saludo;
+
+    @Autowired
+    public SaludoService(Saludo saludo) {
+        this.saludo = saludo;
+    }
 }
 ```
 
-Para indicar que este método es un manejador de peticiones debemos indicar qué tipo de operaciones manejará (el verbo HTTP que soportará). Como en este caso solo se usará para crear información, debes usar el verbo POST; En este caso la anotación que se usrá es @PostMapping a la cual hay que indicarle la URL de las peticiones que manejará. En este caso será la ruta saludo. El método queda de la siguiente forma:
+Para terminar con `SaludoService`, agregamos un método `saluda` que haga uso de esta instancia:
 
 ```java
-    @PostMapping("/saludo")
-    public Saludo saluda(Saludo saludo){
-        return saludo;
+public String saluda(){
+  return "Hola " + saludo.getNombre();
+}
+```
+
+Si intentáramos ejecutar la aplicación de esta forma obtendriamos "Hola null", ya que el valor de `nombre` no ha sido inicializado (es una valor nulo).
+
+![](img/img_001.png)
+
+Como no podemos (o queremos) crear directamente la instancia de `Saludo` dejaremos que `SaludoService` establezca el valor de `nombre`. Para ello crearemos un método de inicialización el cual se ejecutará una vez que se haya creado la instancia de `SaludoService` y se haya inyectado `Saludo`. 
+
+```java
+    public void init(){
+        saludo.setNombre("Beto");
     }
 ```
 
-Si ejecutas la aplicación de esta forma y luego haces una llamada desde Postman, todo funcionará (no habrá errores, ni excepciones y recibirás ua respuesta); sin embargo, en la respuesta que recibas todos los campos de `Saludo` estarán vacíos. Esto es porque hace falta indicarle a Spring MVC que el parámetro de tipo `Saludo` lo recibirá en el cuerpo de la petición, usando la anotación `@RequestBody`, de esta forma:
+Para indicarle a Spring que debe invocar este método una vez que se hayan inicializado los Beans, lo decoramos con la anotación `@PostConstruct`
 
 ```java
-    @PostMapping("/saludo")
-    public Saludo saluda(@RequestBody Saludo saludo){
-        return saludo;
+    @PostConstruct
+    public void init(){
+        saludo.setNombre("Beto");
     }
 ```
 
+Hagamos uso de esta Bean en otra parte de nuestra aplicación.
 
-Abre postman y crea una nueva petición. Esta deberá ser una petición tipo POST a la URL `http://localhost:8080/saludo`:
+vamos a la clase principal, `Sesion5Application`, la cual está decorada con la anotación `@SpringBootApplication`. Es en esta clase donde le indicaremos a Spring que debe inyectar la instancia de `SaludoService`. Para eso declararemos un atributo de tipo `SaludoService`, de la misma forma que en el ejemplo anterior:
 
-![imagen](img/img_06.png)
+```java
+@SpringBootApplication
+public class Sesion5Application {
 
+   private final SaludoService saludoService;
 
-En la pestaña `Body` selecciona la opción `Raw` como tipo de petición y `JSON` como formato de la misma:
-
-![imagen](img/img_07.png)
-
-
-Coloca el siguiente contenido en el cuerpo de la petición:
-
-```json
-{
-    "mensaje": "Hola Mundo",
-    "nombre": "Beto",
-    "edad": 5
+    public Sesion5Application(@Autowired SaludoService saludoService) {
+        this.saludoService = saludoService;
+    }
 }
 ```
 
-Presiona el botón `Send`. Al recibir la repuesta debes obtener el siguiente resultado:
+Haremos es hacer que `Sesion5Application` implemente la interface `CommandLineRunner`, y en su método `run` imprimiremos el valor del atributo `nombre` de saludo, usando la instancia de `SaludoService`:
 
-![imagen](img/img_08.png)
+```java
+@SpringBootApplication
+public class Sesion5Application implements CommandLineRunner {
+
+    private final SaludoService saludoService;
+
+    public Sesion5Application(@Autowired SaludoService saludoService) {
+        this.saludoService = saludoService;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Sesion5Application.class, args);
+    }
+
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println(saludoService.saluda());
+    }
+}
+
+```
+
+Si ahora ejecutamos la aplicación, debemos obtener la siguiente salida en la consola:
+
+![](img/img_002.png)
+

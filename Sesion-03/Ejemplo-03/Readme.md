@@ -1,143 +1,138 @@
-## Ejemplo 03: Suites de pruebas
+## Ejemplo 03: Método POST para creación y actualización de información
 
 ### OBJETIVO
 
-- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
-- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
-
+- Aprender la forma en la que Spring MVC permite recibir objetos complejos (objetos con múltiples atributos de varios tipos)
 
 ### DESARROLLO
 
-Cuando comenzamos a desarrollar un número de pruebas, en algunas ocasiones querremos agruparlas de una forma lógica en la que tengan sentido y ejecutarlas en conjunto y de forma independiente a las demás pruebas que podemos tener en el sistema. A esta agrupación lógica de pruebas se le conoce con el nombre de **Suite de pruebas**
+REST (Representational State Transfer) es un conjunto de principios que indican una forma de programar servicios web que aprovechan al máximo las características del protocolo HTTP.    
 
-JUnit proporciona las siguientes anotaciones para crear conjuntos de pruebas:
+Uno de los puntos más importantes de REST es el uso de los métodos HTTP de forma explícita. Este principio establece una correlación individual entre las operaciones CRUD (crear, leer, actualizar y borrar) y los métodos HTTP. Según esta correspondencia:
 
-- `@Suite`: Indica que la clase en la que se coloca la anotación servirá como una clase de "configuración" para la suite de pruebas. Junto con esta anotación debe colocarse alguna de las siguientes.
-- `@SelectPackages`: Indica en qué paquete se encuentran las clases que queremos que se ejecuten como parte de la suite de pruebas.
-- `@SelectClasses`: Indica qué clases son las que se ejecutarán como parte de la suite de pruebas.
 
-Para definir una suite de prueba debemos elegir una de las dos últimas anotaciones anteriores y colocarla, con sus valores respectivos, en una clase vacía. No es necesario que esta clase tenga ningún código, ya que su único objetivo es que tengamos un lugar para colocar la anotación.
+![imagen](img/img_01.png)
+
+Hasta el momento has aprendido a usar el métod **GET** para obtener recursos. En este ejemplo aprenderás a usar los dos siguientes métodos HTTP: **POST** para la creación de un nuevo recurso en el servidor y **PUT** para la actualización de ese recurso. 
 
 
 #### Implementación
 
-Para incluir las suites de pruebas en el proyecto debemos agregar una dependencia adicional en el archivo `build.grade`:
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ Idea como lo hiciste en la primera sesión. Selecciona las siguientes opciones:
 
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-engine</artifactId>
-            <version>1.8.2</version>
-        </dependency>
-    </dependencies>
-```
-
-Para este ejercicio modificaremos la clase de prueba de la calculadora del primer ejercicio. Dejaremos esta clase vacía y crearemos una clase especial para validar cada una de las operaciones. Así que al final tendremos 5 clases.
-
-La primera será para la operación de **suma**:
-
-```java
-
-class CalculadoraSumaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-
-    }
-
-    @Test
-    @DisplayName("Prueba suma")
-    void sumaTest() {
-        int esperado = 5;
-        assertEquals(esperado, calculadora.suma(3, 2));
-    }
-}
-  
-```
-
-La segunda será para la operación de **resta**:
-
-
-```java
-
-class CalculadoraRestaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-
-    }
-
-    @Test
-    @DisplayName("Prueba resta")
-    void restaTest() {
-        int esperado = 1;
-        assertEquals(esperado, calculadora.resta(3, 2));
-    }
-}
-
-```
-
-La tercera para la operación de **multiplicación**:
-
-```java
-
-class CalculadoraMultiplicaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-    }
-
-    @Test
-    @DisplayName("Prueba multiplicación")
-    void multiplicaTest() {
-        int esperado = 6;
-        assertEquals(esperado, calculadora.multiplica(3, 2));
-    }
-}
-
-```
-
-La cuarta para la operación de **división**:
-
-Y finalmente la quinta clase. Esta será la que usaremos para crear la suite de pruebas y en la que indicaremos qué clases serán las que incluiremos en el el conjunto. Para eso usaremos una clase que no tendrá ningún contenido y pondremos, además de la anotación `@Suite` que es obligatoria, la anotación `@SelectClasses` en la cual pasaremos como valor un arreglo con todas las clases que queremos que se incluyan en el conjunto de pruebas. Que para este ejemplo son las cuatro que ya hemos creado:
-
-```java
-
-@Suite
-@SelectClasses({CalculadoraSumaTest.class, CalculadoraRestaTest.class, CalculadoraMultiplicaTest.class, CalculadoraDivideTest.class})
-class CalculadoraTest {
-
-}
-
-```
-
-
-Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
-
-![imagen](img/img_01.png)
-
-Debes ver el siguiente resultado en la consola del IDE:
+    Grupo, artefacto y nombre del proyecto.
+    Tipo de proyecto: **Maven**.
+    Lenguaje: **Java**.
+    Forma de empaquetar la aplicación: **jar**.
+    Versión de Java: **11** o superior.
 
 ![imagen](img/img_02.png)
+
+En la siguiente ventana elige Spring Web como la única dependencia del proyecto:
+
+![imagen](img/img_03.png)
+
+Presiona el botón `Finish`.
+
+Dentro del paquete del proyecto crearemos un subpaquete que contendrá los controladores de Spring MVC.
+
+Haz clic con el botón derecho del ratón sobre el paquete y en el menú que se muestra selecciona las opciones `New  -> Package`. Dale a este nuevo paquete el nombre de `controllers`.
+
+![imagen](img/img_04.png)
+
+Crea un segundo paquete llamado `model` a la misma altura que el paquete `controllers`. Al final debes tener dos paquetes adicionales:
+
+![imagen](img/img_05.png)
+
+Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta clase representará el modelo de los datos que regresará el servicio que crearemos en un momento. Esta será una clase sencilla que tendrá tres propiedades, las primeas dos de tipo `String`: `mensaje` y `nombre`, y la tercera será de tipo `int`: `edad`. Además de estas propiedades la clase debe tener sus métodos **setter** y **getter**:
+
+```java
+public class Saludo {
+    private String mensaje;
+    private String nombre;
+    private int edad;
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+}
+```
+En el paquete `controller` crea una nueva clase llamada `SaludoController`. Esta clase implementará los servicios web REST que manejan a los recursos de tipo `Saludo`. Para indicar a Spring que este componente es un servicio REST debemos decorar la case con la anotación `@RestController`:
+
+```java
+@RestController
+public class SaludoController {
+
+}
+```
+
+Esta clase tendrá un solo método o manejador de llamadas, el cual recibirá un parámetro de tipo `Saludo` y regresará también ese mismo recurso de tipo `Saludo` con un mensaje preestablecido.
+
+```java
+public Saludo saluda(Saludo saludo){
+    return saludo;
+}
+```
+
+Para indicar que este método es un manejador de peticiones debemos indicar qué tipo de operaciones manejará (el verbo HTTP que soportará). Como en este caso solo se usará para crear información, debes usar el verbo POST; En este caso la anotación que se usrá es @PostMapping a la cual hay que indicarle la URL de las peticiones que manejará. En este caso será la ruta saludo. El método queda de la siguiente forma:
+
+```java
+    @PostMapping("/saludo")
+    public Saludo saluda(Saludo saludo){
+        return saludo;
+    }
+```
+
+Si ejecutas la aplicación de esta forma y luego haces una llamada desde Postman, todo funcionará (no habrá errores, ni excepciones y recibirás ua respuesta); sin embargo, en la respuesta que recibas todos los campos de `Saludo` estarán vacíos. Esto es porque hace falta indicarle a Spring MVC que el parámetro de tipo `Saludo` lo recibirá en el cuerpo de la petición, usando la anotación `@RequestBody`, de esta forma:
+
+```java
+    @PostMapping("/saludo")
+    public Saludo saluda(@RequestBody Saludo saludo){
+        return saludo;
+    }
+```
+
+
+Abre postman y crea una nueva petición. Esta deberá ser una petición tipo POST a la URL `http://localhost:8080/saludo`:
+
+![imagen](img/img_06.png)
+
+
+En la pestaña `Body` selecciona la opción `Raw` como tipo de petición y `JSON` como formato de la misma:
+
+![imagen](img/img_07.png)
+
+
+Coloca el siguiente contenido en el cuerpo de la petición:
+
+```json
+{
+    "mensaje": "Hola Mundo",
+    "nombre": "Beto",
+    "edad": 5
+}
+```
+
+Presiona el botón `Send`. Al recibir la repuesta debes obtener el siguiente resultado:
+
+![imagen](img/img_08.png)

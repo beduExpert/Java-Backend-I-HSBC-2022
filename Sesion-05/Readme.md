@@ -1,69 +1,67 @@
-## Sesión 5: Java Beans y la Inversión de Control en Spring Boot :arrows_clockwise:
+## Sesión 3: Anotaciones y Pruebas Unitarias con JUnit :heavy_check_mark:
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" align="right" height="120" hspace="10">
+<img src=".github/assets/img/indice.png" align="right" height="120" hspace="10">
 <div style="text-align: justify;">
 
 ### 1. Objetivos :dart:
 
-- Identificar qué es un Java Bean
-- Usar Spring como mecanismo de inyección de dependencias
-
+- Distinguir los distintos usos de las anotaciones en las pruebas con JUnit y Mockito.
+- Identificar qué es JUnit
+- Aprender a crear dobles de prueba con Mockito.
 
 ### 2. Contenido :blue_book:
 
-El Core de Spring (su módulo principal) es un poderoso mecanismo de inyección de dependencias, el cual es una de las formas principales de inversión de control. Como desarrolladores debemos colocar algunas anotaciones básicas para indicarle a Spring el uso que le daremos a un *Bean* o componente de nuestra aplicación, y Spring se encargará de crear una instancia de este componente e inyectarlo en todos los lugares en los que lo usemos. De esta forma, no nos preocupamos por la manera en la que el *Bean* es creado, inicializado y en cómo llega a las clases en donde se necesitan. 
+Una prueba tiene como objetivo evaluar la funcionalidad de una aplicación e identificar posibles errores. Dentro del mundo de las pruebas, el tipo más básico son las **pruebas unitarias**, las cuales se encargan de validar una funcionalidad única de una parte de nuestro código. 
 
-Al librarnos de los mecanismos de *cableado* de los elementos entre nuestras distintas clases, logramos centrarnos más en la lógica de negocio que debemos resolver. Además, esto trae un beneficio adicional: Si deseamos cambiar la implementación de un *Bean* por otra equivalente, podemos hacerlo sin ningún esfuerzo y sin reescribir o modificar todas las partes de nuestra aplicación en la que se usa ese componente; dejamos que sea Spring quien se encarga de eso.
+En Java existen varios frameworks para realizar pruebas unitarias. El más ampliamente utilizado es JUnit. 
 
 En este módulo aprenderemos:
 
-- Scope de los Beans en Spring
-- Configuración explícita de Beans para inyección de dependencias.
-- Configuración implícita de Beans para inyección de dependencias.
-- Inicialización de propiedades.
+- Aprender qué es una prueba unitaria y los beneficios de estas durante el ciclo de vida del desarrollo de software.
+- Aplicar pruebas unitarias usando JUnit 5 para validar el correcto funcionamiento de una aplicación de forma automática.
 
 ---
 
-<img src=".github/assets/img/beans.jpeg" align="right" height="90" hspace="10">
+<img src=".github/assets/img/junit.png" align="right" height="90" hspace="10">
 
-#### <ins>Tema 1: ¿Qué son los Beans en Spring?</ins>
+#### <ins>Tema 1: Pruebas con JUnit</ins>
 
-Los **Beans** en Spring Framework son los objetos que forman la columna vertebral de nuestras aplicaciones. Estos son manejados por el núcleo de inversión de control de Spring. Un **Bean** es automáticamente instanciado, inicializado, ensamblado y administrado por el contenedor de IoC de Spring.
-
-El trabajo con *Beans* es un cambio a la forma tradicional de programación en la que el programador es responsable de cada aspecto de un objeto; aquí permitimos que sea el framework quien controle a estos objetos, delegándole de esa forma parte de la responsabilidad de la aplicación.
-
-Crear e inyectar un *Bean* en Spring es muy sencillo, como lo veremos en el Ejemplo 1.
+JUnit es un framework para realizar y automatizar pruebas de aplicaciones Java. Es decir, JUnit se sitúa en la fase de pruebas dentro del ciclo de Ingeniería del Software.
 
 - [**`EJEMPLO 1`**](./Ejemplo-01)
-
----
-
-<img src=".github/assets/img/selection.jpg" align="right" height="90" hspace="10">
-
-#### <ins>Tema 2: Configuración implícita de Beans para inyección de dependencias.</ins>
-
-Si bien es posible inicializar y configurar los *Beans* de forma explícita (y esto es algo muy común cuando deseamos modificar la configuración por default proporcionada por los distintos componentes ya que proporciona el Framework de Spring) cuando creamos nuestras propias clases podemos ahorrarnos este trabajo al permitir que Spring configure e inicialice de forma implícita los objetos creados a partir de nuestras clases. En el [segundo ejemplo](./Ejemplo-02) veremos cómo hacer esto, y tendrás como [primer reto](./Reto-01) el modificar el scope de uno de estos objetos.
-
-- [**`EJEMPLO 2`**](./Ejemplo-02)
 - [**`Reto 1`**](./Reto-01)
 
 ---
 
-<img src=".github/assets/img/preparation.jpg" align="right" height="90" hspace="10">
+<img src=".github/assets/img/mockito.jpg" align="right" height="90" hspace="10">
 
-#### <ins>Tema 3: Inicialización de propiedades.</ins>
+#### <ins>Tema 2: Dobles de pruebas con JUnit y Mockito.</ins>
 
-En algunas ocasiones tendremos que modificar algunos valores de los *Beans* de la aplicación, una vez que todo se ha configurado, ya sea porque necesitemos que otros objetos estén inicializados o porque hay valores que solo podremos obtener en tiempo de ejecución. Para eso, en el [tercer ejemplo](./Ejemplo-03) veremos cómo podemos realizar la inicialización de valores una vez que nuestros *Beans* han sido creados.
+Mockito sirve para crear Mocks, Spys, etc, de manera sencilla.
+
+Esta librería de Java permite simular el comportamiento de una clase de forma dinámica. De esta forma se crea un aislamiento de las dependencias con otras clases y sólo se probará la funcionalidad que se quiere probar. La simulación del comportamiento de una clase se realiza mediante los dobles.
+
+
+- [**`EJEMPLO 2`**](./Ejemplo-02)
+- [**`Reto 2`**](./Reto-02)
+
+---
+
+<img src=".github/assets/img/suite.png" align="right" height="90" hspace="10">
+
+#### <ins>Tema 3: Suites de pruebas.</ins>
+
+El concepto fundamental en estas herramientas es el caso de prueba (test case), y la suite de prueba (test suite). Los casos de prueba son clases o módulos que disponen de métodos para probar los métodos de una clase o módulo concreta/o. Así, para cada clase que quisiéramos probar definiríamos su correspondiente clase de caso de prueba. Mediante las suites podemos organizar los casos de prueba, de forma que cada suite agrupa los casos de prueba de módulos que están funcionalmente relacionados.
 
 - [**`EJEMPLO 3`**](./Ejemplo-03)
-
+  
 ---
 
 ### 3. Postwork :memo:
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
 
-- [**`POSTWORK SESIÓN 5`**](./Postwork/)
+- [**`POSTWORK SESIÓN 3`**](./Postwork/)
 
 <br/>
 

@@ -1,74 +1,88 @@
-## Reto 01: Cambio de Scope
+## Reto 01: Prueba de Exceptions
 
-### OBJETIVO
+### 🎯 OBJETIVO
 
-- Modificar el Scope de un Bean manejado por Spring, para crear diferentes instancias del mismo.
+- Realizar una prueba unitaria que se encargue de validar que al momento de validar una funcionalidad, se lanza la excepción esperada.
 
 ### DESARROLLO
 
-Ahora que logramos que Spring se encargue de manejar los Beans, hay algo más que debes saber. Por default, Spring sólo crea una instancia de cada uno de los Beans que maneja. Esto algunas veces puede ser una ventaja pero otras una desventaja. 
+Al momento de mostrar una demo de nuestra calculadora al cliente, este quedó maravillado de su correcto funcionamiento y la ejecución correcta de todas las operaciones que nos pidió realizar durante la demo. Sin embargo, notó que al momento de realizar la implementación de la calculadora omitimos una operación que para él es esencial en sus operaciones diarias: la división. Tu reto será arreglar este terrible error que hemos cometido al entregar una aplicación incompleta al cliente.
 
-Para comprobar esto, haremos una modificación a la aplicación del Ejemplo 2, agregando un mensaje en el constructor de `Saludo`:
-
-```java
-    public Saludo() {
-        this.nombre = "Beto";
-
-        System.out.println("Creando una instancia de Saludo");
-    }
-```
-
-Y ahora, modifica la clase `SaludoService` para agregar una segunda instancia de saludo:
-
-```java
-@Service
-public class SaludoService {
-
-    private final Saludo saludo;
-    private final Saludo otroSaludo;
-
-    @Autowired
-    public SaludoService(Saludo saludo, Saludo otroSaludo) {
-        this.saludo = saludo;
-        this.otroSaludo = otroSaludo;
-    }
-
-    public String saluda(){
-        return "Hola " + saludo.getNombre();
-    }
-}
-```
-
-Si ejecutas la aplicación, debes ver el siguiente mensaje en la consola:
-
+La división es una de las cuatro operaciones básicas de la aritmética que consiste en averiguar cuántas veces un número (divisor) está contenido en otro número (dividendo). Sin embargo, y a diferencia de las otras tres operaciones, la división presenta una complicación. Existe un valor que podemos asignar al divisor y que causa que la división explote al encontrar una singularidad espacial en un punto importante el cual podemos ver en la siguiente imagen:
 
 ![imagen](img/img_01.png)
 
-El primer mensaje aprece entre algunos otros textos de la consola, pero a pesar de que tenemos dos instancias solo hay un mensaje. 
 
-Podemos hacer una segunda prueba para comprobar esto, comparando las dos instancias usando el operador `==`:
+En matemáticas, la división entre cero es una división en la que el divisor es igual a cero, y que no tiene un resultado bien definido. En aritmética y álgebra, es considerada una *indefinición*, y su mal uso puede dar lugar a aparentes paradojas matemáticas.
+
+Como queremos evitarle molestias a nuestro cliente y demostrarle que nuestra calculadora está preparada para todos los posibles valores que le ingresemos debes validar, en una prueba unitaria desarrollada usando JUnit, que si intentamos realizar una división entre cero se lanzará una excepción de tipo "IllegalArgumentException" con el mensaje mostrado a continuación:
+
 
 ```java
-    @Autowired
-    public SaludoService(Saludo saludo, Saludo otroSaludo) {
-        this.saludo = saludo;
-        this.otroSaludo = otroSaludo;
+    public float divide(float a, float b){
 
-        System.out.println(saludo == otroSaludo);
+        if(b == 0){
+            throw new IllegalArgumentException("No es posible dividir un valor entre 0");
+        }
+
+        return a / b;
     }
 ```
-
-![imagen](img/img_02.png)
-
-Con eso no queda duda de que las dos instancias apuntan al mismo objeto. 
-
-Tu reto consiste en modifcar la forma en la que Spring crea las instancias de `Saludo` para lograr obtener dos instancias diferentes:
 
 ¡Buena suerte!
 
 
----
+<details>
+  <summary>Solución</summary>
 
-### Solución
+Agregamos el método de prueba en la clase `CalculadoraTest` siguiendo la misma estructura que para el resto de los métodos:
 
-¡Recuerda intentar resolver el reto antes de ver la solución! Una vez que lo hayas intentado puedes dirijirte al [proyecto con la solución](./solucion).
+```java
+
+  @Test
+  @DisplayName("Prueba división")
+  void divideTest() {
+    
+  }
+```
+
+La solución al reto puede hacerse de dos formas. En la primera debemos hacerlo en dos pasos. Primero, usamos el método `assertThrows` para indicar que esperamos que la invocación al método `divide` lance una excepción. Este método recibe dos parámetros, en el primero debemos indicar la clase de la excepción. En el segundo parámetro usaremos una función lambda para realizar la invocación al método que estamos probando. El llamado a `assertThrows` regresará la excepción lanzada por el método:
+
+```java
+  @Test
+  @DisplayName("Prueba división")
+  void divideTest() {
+  
+    Throwable exception = assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0));
+
+ }
+```
+
+El segundo paso consiste en obtener el mensaje (el texto) de la excepción para comprobar que es el mismo texto que estamos esperando. Por lo que la prueba completa queda de la siguiente forma:
+
+```java
+    @Test
+    @DisplayName("Prueba división")
+    void divideTest() {
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0));
+
+        assertEquals("No es posible dividir un valor entre 0", exception.getMessage());
+    }
+```
+
+La segunda forma de implementar la solución nos permite usar una versión sobrecargada de `assertThrows` que recibe como tercer parámetro el mensaje que estamos esperando obtener:
+
+```java
+    @Test
+    @DisplayName("Prueba división")
+    void divideTest() {
+        assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0), "No es posible dividir un valor entre 0");
+    }
+```
+
+Al ejecutar la prueba anterior debes obtener el siguiente mensaje indicando que la prueba fue satisfactoria y que el cliente finalmente nos pagará por nuestra aplicación:
+
+![imagen](img/img_02.png)
+
+
+</details>

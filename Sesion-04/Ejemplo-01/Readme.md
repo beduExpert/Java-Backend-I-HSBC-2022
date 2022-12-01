@@ -1,69 +1,180 @@
-## Ejemplo 01: Proyecto Maven con Spring Initializr
+## Ejemplo 01: Definición y configuración explícita de Beans
 
 ### OBJETIVO
 
-- Crear un proyecto Maven usando Spring Initializr.
-- Compilar, empaquetar y ejecutar la aplicación o proyecto generados desde la línea de comandos.
+- Crear un Bean de Spring de forma explícita.
+- Inyectar el Bean creado en otras clases para su uso.
+
 
 ### DESARROLLO
 
-Spring Initializr es un portal que se encarga de generar, de forma automática, los archivos necesarios para iniciar un proyecto Spring Boot. A través de este portal puedes seleccionar diferentes opciones como la versión de Java con la que desarrollarás tu proyecto, la herramienta de gestión del proyecto (Maven o Maven), y los módulos o librerias que usarás.
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
 
-Su objetivo es ayudarnos a generar esa estructura inicial del proyecto de una forma fácil y rápida para que podamos comenzar el desarrollo en el menor tiempo posible, teniendo la confianza de que contamos con una estructura correcta.
-
-
-#### Implementación
-
-Entra al sitio de [Spring Initializr](https://start.spring.io/). Ahí verás una sola página dividida en dos secciones. Comienza llenando la información de la sección del lado izquierdo. Selecciona:
-  - Maven Proyect (no te preocupes, no es necesario que tengas Maven instalado).
+  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
   - Lenguaje: **Java**.
   - Versión de Spring Boot, la versión estable más reciente
   - Grupo, artefacto y nombre del proyecto.
   - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o **17**.
+  - Versión de Java: **11** o superior.
 
-![](img/img_01.png)
+![](img/img_001.png)
 
-En la sección de la derecha (las dependencias) presiona el botón `Add dependencies` y en la ventana que se abre busca la dependencia `Web` o `Spring Web`.
+No selecciones ninguna dependencia, no las necesitaremos en este ejemplo.
 
-![](img/img_02.png)
+Presiona el botón "Finish".
 
-Selecciona la dependencia `Spring Web` y con eso debes verla en la lista de las dependencias del proyecto:
+Ahora, crea dos paquetes dentro de la estructura creada por IntelliJ. El primer paquete se llamará `model` y el segundo `config`:
 
-![imagen](img/img_03.png)
+![](img/img_002.png)
 
-Presiona el botón "GENERATE" (o presiona `Ctrl` + `Enter` en tu teclado) para que comience la descarga del proyecto.
+Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta representa al Bean que inyectaremos más adelante en este ejemplo:
 
-![imagen](img/img_04.png)
+```java
+public class Saludo {
+    private final String nombre;
 
-Descomprime el archivo `zip` descargado, el cual tiene más o menos el siguiente contenido.
+    public Saludo(String nombre) {
+        this.nombre = nombre;
+    }
 
-![imagen](img/img_05.png)
+    public String getNombre() {
+        return nombre;
+    }
+}
+```
 
-Abre una terminal o línea de comandos en el directorio que acabas de descomprimir y ejecuta los siguientes comandos, los cuales se ejecutan en Maven gracias a un *wrapper* que se distribuye dentro del paquete que acabas de descargar:
+Fíjate como `Saludo` tiene una sola propiedad llamada `nombre` que hemos marcado como `final`. Esto quiere decir que una vez que se establezca el valor de esa propiedad no podrá ser modificado. Aunque esto no es obligatorio sí es una buena práctica.
 
-        mvn clean
-      
-7. La salida del comando anterior debe ser parecida a la siguiente:
+También, creamos un constructor que permita inicializar el valor de `nombre` y un `getter`. Debido a que el valor de `nombre` no puede ser cambiado una vez que se ha establecido, no es necesario proporcionar un `setter`.
 
-![imagen](img/img_06.png)
+Dentro del paquete `config` crea una clase llamada `SaludoConfig`. Esta clase es la que usaremos para configurar el Bean que se usará en la aplicación. Como esta es una clase de **configuración** debemos decorarla con la anotación `@Configuration`, de esta forma le indicamos a Spring que esta clase se usará para la creación (o modificación) de beans dentro de la aplicación:
 
-Una vez que todo está compilado, ejecutamos la aplicación
-        
-Debes obtener una salida similar a la siguiente:
+```java
+@Configuration
+public class SaludoConfig {
 
-![imagen](img/img_07.png)
+}
+```
 
-Esto indica que la aplicación se está ejecutando en el puerto **8080**. Como no hemos colocado ningún contenido en la aplicación no hay mucho que mostrar pero podremos comprobar que la aplicación está bien configurada, que todos los elementos necesarios están instalados y configurados y que nuestra aplicación se ejecuta de forma correcta:
+A continuación, declaramos nuestro primer Bean de forma explícita. Para ello hacemos uso de la anotación `@Bean` dentro de un método que, por convención, tendrá el mismo nombre del Bean que crearemos; en este caos será `saludo`:
 
-      http://localhost:8080
-      
-Una vez que el sitio cargue, debes ver una pantalla como la siguiente:
+```java
+@Bean
+public Saludo saludo(){
 
-![imagen](img/img_08.png)
+}
+```
 
-Detén la aplicación presionando `Ctrl + C` en la terminal en donde levantaste la aplicación.
+Crear e inicializar nuestro bean dentro de este método es muy sencillo, simplemente regresamos una nueva instancia de `Saludo`:
 
-Puesto que la aplicación está completamente contenida en un archivo `jar`, también es posible ejecutarla como vimos en las sesiones anteirores.
+```java
+@Bean
+public Saludo saludo(){
+  return new Saludo("Beto");
+}
+```
 
-¡¡Felicidades, acabas de ejecutar tu primer "Hola mundo" con Spring Boot!!
+Con esto le estamos proporcionando a Spring, de forma **explícita**, el Bean que usará cada vez que alguna clase necesite una instancia de `Saludo`. También, estamos inicializando el valor de su propiedad `nombre` de forma explícita a `Beto`.
+
+Hagamos uso de esta Bean en otra parte de nuestra aplicación.
+
+vamos a la clase principal, `Sesion5Application`, la cual está decorada con la anotación `@SpringBootApplication`. Es en esta clase donde le indicaremos a Spring que debe inyectar la instancia de `Saludo`. Para eso declararemos un atributo de tipo `Saludo`, de la siguiente forma:
+
+```java
+@SpringBootApplication
+public class Sesion5Application {
+
+    private Saludo saludo;
+    
+    public static void main(String[] args) {
+        SpringApplication.run(Sesion5Application.class, args);
+    }   
+}
+```
+
+Antes de ver cómo indicarle a Spring que debe inyectar esta nueva instancia, mostraremos como comprobar que Spring está efectívamente inyectando el Bean, lo primero que haremos es hacer que `Sesion5Application` implemente la interface `CommandLineRunner`, y en su método `run` imprimiremos el valor del atributo `nombre` de saludo:
+
+```java
+@SpringBootApplication
+public class Sesion5Application implements CommandLineRunner {
+
+    private Saludo saludo;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Sesion5Application.class, args);
+    }
+
+
+	@Override
+	public void run(String... args) throws Exception {
+		System.out.println(saludo.getNombre());
+	}
+}
+```
+
+Ahora sí, le indicaremos a Spring que debe inyectar la instancia. Lo veremos de tres formas, las dos primeras son maneras que funcionan pero no son muy recomendadas (anque tal vez los veas en muchos tutoriales), la tercera es la forma que sigue la mejor práctica para la inyección de estas instancias.
+
+En la primera forma, colocamos la anotación `@Autowired` directamente en la declaración de la instancia de `Saludo`, de esta forma:
+
+```java
+@Autowired
+private Saludo saludo;
+```
+
+Si ahora ejecutamos la aplicación, debemos obtener la siguiente salida en la consola:
+
+![](img/img_003.png)
+
+La primera forma funciona, pero no es recomendada. El problema es que el atributo `Saludo` tiene un nivel de acceso `private` (lo cual sigue las mejores prácticas de la encapsulación), esto quiere decir que Spring debe primero modificar el nivel de acceso de este atributo, inyectar el valor, y luego volver a regresar su nivel de acceso original. Esto, además de que es un problema potencial de seguridad, también hace que la inicialización se más lenta.
+
+Veamos la segunda forma de indicar a Spring que inyecte la instancia. Para esto, creamos un método `setter` para `saludo`, y movemos la anotación `@Autowired` a este método:
+
+```java
+    private Saludo saludo;
+
+    @Autowired
+    public void setSaludo(Saludo saludo) {
+        this.saludo = saludo;
+    }
+```
+
+Si ejecutamos nuevamente la aplicación, debemos ver la misma salida en la consola. 
+
+![](img/img_003.png)
+
+Esta segunda forma es mucho mejor que la primera, ya que permitimos que Spring haga uso del `setter` correspondiente para inyectar la instancia, y de esta forma no se mete con los modificadores de acceso que estemos usando. Sin embargo, hay un problema, ya que ahora permitimos que alguna otra clase modifique en cualquier momento la instancia de `Saludo` que estamos usando. Esto, en algunos casos, puede ser algo que estemos buscando, pero en la mayoría de las ocasiones buscamos asegurar que siempre usemos una misma única instancia, y que una vez que esta se ha inyectado no sea modificado. 
+
+Para solucionar este problema, usaremos una tercera forma de inyectar la instancia de `Saludo`, y para ello declararemos un constructor de `Sesion5Application` que reciba la instancia correspondiente. Es en este constructor donde declararemos, usando `@Autowired`, que Spring debe inyectar la instancia de `Saludo`. Podemos hacerlo de dos formas, a nivel de constructor:
+
+```java
+    @Autowired
+    public Sesion5Application(Saludo saludo) {
+        this.saludo = saludo;
+    }
+```
+
+o a nivel de parámetro:
+
+```java
+public Sesion5Application(@Autowired Saludo saludo) {
+  this.saludo = saludo; 
+}
+```
+
+Para este caso, las dos formas son equivalentes. 
+
+Gracias a esto ahora podemos declarar la instancia de `Saludo` como `final`, y de esa forma asegurar que no será modificada posteriormente:
+
+```java
+    private final Saludo saludo;
+
+    public Sesion5Application(@Autowired Saludo saludo) {
+        this.saludo = saludo;
+    }
+```
+
+Si volvemos a ejecutar la aplicación, veremos que obtenemos la misma salida.
+
+![](img/img_003.png)
+
+Esta tercera forma es la recomandada para inyectar los Beans dentro de las distintas clases de nuestra aplicación.

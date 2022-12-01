@@ -1,128 +1,153 @@
-## Ejemplo 02: Configuración implícita de Beans para inyección de dependencias.
+## Ejemplo 02: Pruebas unitarias con JUnit y Mockito
 
 ### OBJETIVO
 
-- Crear un Bean de Spring de forma implícita.
-- Inyectar el Bean creado en otras clases para su uso.
-
+- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
+- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
 
 ### DESARROLLO
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+Uno de los puntos más importantes al desarrollar una prueba unitaria es que esta debe validar un funcionamiento particular de una método o clase de forma aislada de otras funcionalidades; sin embargo, en una aplicación esto no siempre es fácil de lograr, ya que nuestras clases tienen relación y dependen a su vez de otras clases. Para poder aislar completamente los componentes y funcionalidades requeridos por una prueba unitaria existen varias técnicas, una de las más populares es el uso de **dobles de prueba** u objetos *mock*, lo cuales son objetos que sustituyen a las clases reales y a las cuales podemos definirles el comportamiento esperado.
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+Es posible crear mocks manualmente, pero ya existen frameworks que pueden hacerlo por nosotros, estos permiten crear objetos mock en tiempo de ejecución y definir su comportamiento. *Mockito* es uno de los frameworks más ampliamente utilizados en Java para la creación de objetos mock.
 
-![](img/img_001.png)
 
-No selecciones ninguna dependencia, no las necesitaremos en este ejemplo.
+#### Anotaciones básicas
 
-Presiona el botón "Finish".
+Mockito es un framework que permite trabajar de muchas formas, pero la más limpia y sencilla es definir e inicializar los objetos mock usando anotaciones. Para lo cual Mockito proporciona dos anotaciones básicas:
 
-Ahora, crea dos paquetes dentro de la estructura creada por IntelliJ. El primer paquete se llamará `model` y el segundo `service`:
+- `@Mock`: Se usa para indicar a Mockito que debe crear un doble de prueba del objeto decorado con esta anotación.
+- `@Spy`: Indica que además de crear el doble de prueba, realizaremos algunas validaciones o verificaciones sobre los métodos que se ejecutaron sobre este objeto. Esto se hace para comprobar que el flujo que siguió la ejecución de nuestra prueba efectivamente es el que estamos esperando.
+- `@InjectMocks`: Toma todos los objetos Mock creados y los inyecta de forma automática en el objeto que usaremos para ejecutar las pruebas.
 
-![](img/img_002.png)
 
-Dentro del paquete `model` crea una nueva clase llamada `Saludo`. Esta representa al Bean que inyectaremos más adelante en este ejemplo:
+#### Implementación
 
-```java
-public class Saludo {
-    private final String nombre;
+Para este ejercicio modificaremos la calculadora que usamos en el ejemplo anterior para agregar un valor constante el cual obtendremos desde una base de datos usando un Data Access Object (DAO). Como no queremos probar la implementación del componente que se encarga de conectarse a la base de datos para obtener el valor, sino que la calculadora funciona correctamante usando ese valor, simularemos el objeto DAO usando un objeto Mock.
 
-    public Saludo() {
-        this.nombre = "Beto";
-    }
+Lo primero que debemos hacer es incluir las dependencias de JUnit y Mockito en nuestro proyecto. Esto lo hacemos colocando las siguientes línea en el archivo build.gradle, las cuales indican que debemos usar la dependencia de Junit jupiter solo en la etapa de pruebas:
 
-    public String getNombre() {
-        return nombre;
-    }
-}
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 ```
 
-Fíjate como `Saludo` tiene una sola propiedad llamada `nombre` que hemos marcado como `final`. Esto quiere decir que una vez que se establezca el valor de esa propiedad no podrá ser modificado. Aunque esto no es obligatorio sí es una buena práctica. 
-
-También, creamos un constructor en donde inicializamos el valor de `nombre` a un valor fijo. También tenemos el método `getter` de `nombre`. Debido a que el valor de `nombre` no puede ser cambiado una vez que se ha establecido, no es necesario proporcionar un `setter`.
-
-Como queremos que `Saludo` sea manejado como un Bean de Spring, demos indicarlo de alguna forma. Para ello usaremos una de las anotaciones de estereotipos de Spring: `@Component`. Esta anotación nos ayuda a indicar que queremos que Spring gestione las instancias de `Saludo` y que las inyecte en los lugares donde la necesitemos.
-
-Dentro del paquete `service` crea una clase llamada `SaludoService`. Esta clase será en la que inyectaremos la instancia de `Saludo`. Como esta clase será interpretada como un **servicio** debemos decorarla con la anotación `@Service`, otra de las anotaciones de estereotipos de Spring:
+Como siguiente paso, definimos una interface del DAO que se encargará de leer el valor constante de la base de datos:
 
 ```java
-@Service
-public class SaludoService {
 
+public interface CalculadoraDao {
+    int findValorConstante();
 }
+
 ```
 
-A continuación, indicamos que este servicio usará una instancia de `Saludo` y que Spring debe inyectarlo (ya que `Saludo` ahora es una clase manejada por Spring). Para eso repetimos la fórmula del ejemplo anterior: Colocamos un referencia a una instancia de `Saludo` y un constructor que reciba esta instancia, decoramos el constructor con `@Autowired`:
+
+Ahora creamos una clase que contenga la siguiente lógica de sumas y restas. En este momento es igual a la `Calculadora` que desarrollamos antes:
 
 ```java
-@Service
-public class SaludoService {
+public class Calculadora{
 
-    private final Saludo saludo;
-
-    @Autowired
-    public SaludoService(Saludo saludo) {
-        this.saludo = saludo;
-    }
-}
-```
-
-Para terminar con `SaludoService`, agregamos un método `saluda` que haga uso de esta instancia:
-
-```java
-public String saluda(){
-  return "Hola " + saludo.getNombre();
-}
-```
-
-Hagamos uso de esta Bean en otra parte de nuestra aplicación.
-
-vamos a la clase principal, `Sesion5Application`, la cual está decorada con la anotación `@SpringBootApplication`. Es en esta clase donde le indicaremos a Spring que debe inyectar la instancia de `SaludoService`. Para eso declararemos un atributo de tipo `SaludoService`, de la misma forma que en el ejemplo anterior:
-
-```java
-@SpringBootApplication
-public class Sesion5Application {
-
-   private final SaludoService saludoService;
-
-    public Sesion5Application(@Autowired SaludoService saludoService) {
-        this.saludoService = saludoService;
-    }
-}
-```
-
-Haremos es hacer que `Sesion5Application` implemente la interface `CommandLineRunner`, y en su método `run` imprimiremos el valor del atributo `nombre` de saludo, usando la instancia de `SaludoService`:
-
-```java
-@SpringBootApplication
-public class Sesion5Application implements CommandLineRunner {
-
-    private final SaludoService saludoService;
-
-    public Sesion5Application(@Autowired SaludoService saludoService) {
-        this.saludoService = saludoService;
+    public int suma(int a, int b) {
+        return a + b;
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(Sesion5Application.class, args);
+    public int resta(int a, int b) {
+        return a - b;
     }
 
-
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println(saludoService.saluda());
+    public int multiplica(int a, int b) {
+        return a * b;
     }
 }
 
 ```
 
-Si ahora ejecutamos la aplicación, debemos obtener la siguiente salida en la consola:
+Haremos una modificación a esta clase para que use el DAO en cada operación y sume el valor constante a cada operación:
 
-![](img/img_003.png)
+```java
 
+public class Calculadora {
+
+    private CalculadoraDao calculadoraDao;
+
+    public int suma(int a, int b) {
+        return a + b + calculadoraDao.findValorConstante();
+    }
+
+    public int resta(int a, int b) {
+        return a - b + calculadoraDao.findValorConstante();
+    }
+
+    public int multiplica(int a, int b) {
+        return a * b + calculadoraDao.findValorConstante();
+    }
+}
+
+```
+
+Ahora implementamos la clase de prueba. Como no tenemos aún la implementación del DAO crearemos un objeto mock que simule su funcionamiento. Con esto nos aseguramos de que la clase `Calculadora` funcione correctamente independientemente del funcionamiento del DAO.
+
+Para que JUnit sepa que Mockito deberá realizar algunas acciones en la prueba, decoramos la clase de prueba con la anotación `@ExtendWith(MockitoExtension.class)`:
+
+```java
+
+@ExtendWith(MockitoExtension.class)
+class CalculadoraTest {
+
+    @Mock
+    CalculadoraDao calculadoraDao;
+
+    @InjectMocks
+    Calculadora calculadora;
+
+
+    @BeforeEach
+    void setUp() {
+        given(calculadoraDao.findValorConstante()).willReturn(3);
+    }
+
+    @Test
+    @DisplayName("Prueba suma")
+    void sumaTest() {
+        int esperado = 8;
+        assertEquals(esperado, calculadora.suma(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba resta")
+    void restaTest() {
+        int esperado = 4;
+        assertEquals(esperado, calculadora.resta(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba multiplicación")
+    void multiplicaTest() {
+        int esperado = 9;
+        assertEquals(esperado, calculadora.multiplica(3, 2));
+    }
+}
+
+```
+
+
+Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
+
+![imagen](img/img_01.png)
+
+Debes ver el siguiente resultado en la consola del IDE:
+
+![imagen](img/img_02.png)
