@@ -1,24 +1,22 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.3'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
-group = 'org.bedu.java.backend'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+group 'org.bedu.java.backend.sesion3'
+version '1.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    runtimeOnly 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+    testImplementation 'org.mockito:mockito-core:4.3.1'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }

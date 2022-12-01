@@ -1,4 +1,4 @@
-## Sesión 5: Java Beans y la Inversión de Control en Spring Boot :arrows_clockwise:
+## Sesión 4: Java Beans y la Inversión de Control en Spring Boot :arrows_clockwise:
 
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" align="right" height="120" hspace="10">
 <div style="text-align: justify;">

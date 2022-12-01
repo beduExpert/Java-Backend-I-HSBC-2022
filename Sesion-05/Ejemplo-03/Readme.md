@@ -1,143 +1,109 @@
-## Ejemplo 03: Suites de pruebas
+## Ejemplo 03: Consola de H2
 
 ### OBJETIVO
 
-- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
-- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
+- Usar la consola integrada con la base de datos embebida H2 para conectarnos a la instancia de MySQL.
+- Proporcionar un mecanismo sencillo para poder adminsitrar la información de la base de datos sin herramientas externas.
 
 
 ### DESARROLLO
 
-Cuando comenzamos a desarrollar un número de pruebas, en algunas ocasiones querremos agruparlas de una forma lógica en la que tengan sentido y ejecutarlas en conjunto y de forma independiente a las demás pruebas que podemos tener en el sistema. A esta agrupación lógica de pruebas se le conoce con el nombre de **Suite de pruebas**
+Antes de comenzar asegúrate de tener instado [MySQL Community Edition](https://www.mysql.com/products/community/) y de crear una base de datos llamada `bedu`.
 
-JUnit proporciona las siguientes anotaciones para crear conjuntos de pruebas:
+Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
 
-- `@Suite`: Indica que la clase en la que se coloca la anotación servirá como una clase de "configuración" para la suite de pruebas. Junto con esta anotación debe colocarse alguna de las siguientes.
-- `@SelectPackages`: Indica en qué paquete se encuentran las clases que queremos que se ejecuten como parte de la suite de pruebas.
-- `@SelectClasses`: Indica qué clases son las que se ejecutarán como parte de la suite de pruebas.
+  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
+  - Lenguaje: **Java**.
+  - Versión de Spring Boot, la versión estable más reciente
+  - Grupo, artefacto y nombre del proyecto.
+  - Forma de empaquetar la aplicación: **jar**.
+  - Versión de Java: **11** o superior.
 
-Para definir una suite de prueba debemos elegir una de las dos últimas anotaciones anteriores y colocarla, con sus valores respectivos, en una clase vacía. No es necesario que esta clase tenga ningún código, ya que su único objetivo es que tengamos un lugar para colocar la anotación.
+![](img/img_01.png)
 
-
-#### Implementación
-
-Para incluir las suites de pruebas en el proyecto debemos agregar una dependencia adicional en el archivo `build.grade`:
-
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-engine</artifactId>
-            <version>1.8.2</version>
-        </dependency>
-    </dependencies>
-```
-
-Para este ejercicio modificaremos la clase de prueba de la calculadora del primer ejercicio. Dejaremos esta clase vacía y crearemos una clase especial para validar cada una de las operaciones. Así que al final tendremos 5 clases.
-
-La primera será para la operación de **suma**:
-
-```java
-
-class CalculadoraSumaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-
-    }
-
-    @Test
-    @DisplayName("Prueba suma")
-    void sumaTest() {
-        int esperado = 5;
-        assertEquals(esperado, calculadora.suma(3, 2));
-    }
-}
-  
-```
-
-La segunda será para la operación de **resta**:
-
-
-```java
-
-class CalculadoraRestaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-
-    }
-
-    @Test
-    @DisplayName("Prueba resta")
-    void restaTest() {
-        int esperado = 1;
-        assertEquals(esperado, calculadora.resta(3, 2));
-    }
-}
-
-```
-
-La tercera para la operación de **multiplicación**:
-
-```java
-
-class CalculadoraMultiplicaTest {
-
-    static Calculadora calculadora;
-
-    @BeforeAll
-    static void setup() {
-        calculadora = new Calculadora();
-    }
-
-    @Test
-    @DisplayName("Prueba multiplicación")
-    void multiplicaTest() {
-        int esperado = 6;
-        assertEquals(esperado, calculadora.multiplica(3, 2));
-    }
-}
-
-```
-
-La cuarta para la operación de **división**:
-
-Y finalmente la quinta clase. Esta será la que usaremos para crear la suite de pruebas y en la que indicaremos qué clases serán las que incluiremos en el el conjunto. Para eso usaremos una clase que no tendrá ningún contenido y pondremos, además de la anotación `@Suite` que es obligatoria, la anotación `@SelectClasses` en la cual pasaremos como valor un arreglo con todas las clases que queremos que se incluyan en el conjunto de pruebas. Que para este ejemplo son las cuatro que ya hemos creado:
-
-```java
-
-@Suite
-@SelectClasses({CalculadoraSumaTest.class, CalculadoraRestaTest.class, CalculadoraMultiplicaTest.class, CalculadoraDivideTest.class})
-class CalculadoraTest {
-
-}
-
-```
-
-
-Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
-
-![imagen](img/img_01.png)
-
-Debes ver el siguiente resultado en la consola del IDE:
+En la siguiente ventana elige `Spring Web`, `MySQL Driver`, `Spring Data JPA` y `H2 Database` como dependencias del proyecto:
 
 ![imagen](img/img_02.png)
+
+Presiona el botón "Finish".
+
+Dentro del nuevo proyecto crea los siguientes subpaquetes: `model` y `persistence`.
+
+Dentro del paquete `model` crea una clase llamada `Etapa` con los siguientes atributos, junto con sus **getters** y **setters** :
+
+```java
+public class Etapa {
+    private Long etapaId;
+    private String nombre;
+    private Integer orden;
+}
+```
+
+Decora también la clase con las siguientes anotaciones de JPA del paquete `javax.persistence`:
+
+```java
+@Entity
+@Table(name = "ETAPAS")
+public class Etapa {
+
+}
+```
+
+Decora los atributos con las siguientes anotaciones de JPA:
+
+```java
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long etapaId;
+
+    @Column(nullable = false, length = 100)
+    private String nombre;
+
+    @Column(nullable = false, unique = true)
+    private Integer orden;
+```
+
+En el paquete `persistence` crea una interface llamada `EtapaRepository` que extienda de `JpaRepository`. Esta interface permanecerá sin métodos:
+
+```java
+public interface EtapaRepository extends JpaRepository<Etapa, Long> {
+
+}
+```
+
+Coloca el siguiente contenido en el archivo `application.properties` (los valores entre los signos < y > reemplazalos con tus propios valores):
+
+```groovy
+spring.h2.console.enabled=true
+spring.jpa.hibernate.ddl-auto=none
+spring.sql.init.mode=always
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/bedu?serverTimezone=UTC
+spring.datasource.username=<usuario>
+spring.datasource.password=<password>
+```
+
+Ejecuta la aplicación. No debería haber ningún error en la consola y la aplicación debe iniciar de forma correcta. 
+
+Ingresa a la siguiente dirección en tu navegador [http://localhost:8080/h2-console/](http://localhost:8080/h2-console/). Debes ver una venta como la siguiente:
+
+![](img/img_03.png)
+
+Cambia la información del `Driver Class`, `JDBC URL`, `User Name` y `Password` a los valores correspondientes a MySQL (los que tienes en el archivo `application.properties`).
+
+- Driver Class: org.hibernate.dialect.MySQL5Dialect
+- JDBC URL: jdbc:mysql://localhost:3306/bedu?serverTimezone=UTC
+
+Presiona el botón `Test Connection`, debe aparecer un mensaje indicando que la prueba es exitosa (y el password debe haber desaparecido).
+
+![](img/img_04.png)
+
+Vuelve a colocar el password y presiona el botón Connect debes entrar a la consola de H2. Esta consla muestra muchas tablas. Las de tu aplicación serán las últimas:
+
+![](img/img_05.png)
+
+Escribe una consulta en la consola; la información aparcera en el panel de respuestas.
+
+![](img/img_06.png)

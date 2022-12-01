@@ -1,4 +1,4 @@
-## Sesión 4: Aplicación de línea de comandos
+## Sesión 3: Introducción a Spring Boot
 
 ### 🎯 OBJETIVO
 

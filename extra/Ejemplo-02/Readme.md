@@ -1,143 +1,153 @@
-## Ejemplo 02: Inicialización de base de datos con CommandLineRunner 
+## Ejemplo 02: Pruebas unitarias con JUnit y Mockito
 
 ### OBJETIVO
 
-- Aprovechar la interface CommandLineRunner para ejecutar algunas tareas antes de que la aplicación comience a recibir peticiones.
-- Inicializar valores de catálogos en base de datos.
-
+- Crear una prueba que valide el correcto funcionamiento de una clase o componente.
+- Simular el funcionamiento de una clase que aún no existe, usando un mock creado con Mockito.
 
 ### DESARROLLO
 
-Antes de comenzar asegúrate de tener instado [MySQL Community Edition](https://www.mysql.com/products/community/) y de crear una base de datos llamada `bedu`.
+Uno de los puntos más importantes al desarrollar una prueba unitaria es que esta debe validar un funcionamiento particular de una método o clase de forma aislada de otras funcionalidades; sin embargo, en una aplicación esto no siempre es fácil de lograr, ya que nuestras clases tienen relación y dependen a su vez de otras clases. Para poder aislar completamente los componentes y funcionalidades requeridos por una prueba unitaria existen varias técnicas, una de las más populares es el uso de **dobles de prueba** u objetos *mock*, lo cuales son objetos que sustituyen a las clases reales y a las cuales podemos definirles el comportamiento esperado.
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+Es posible crear mocks manualmente, pero ya existen frameworks que pueden hacerlo por nosotros, estos permiten crear objetos mock en tiempo de ejecución y definir su comportamiento. *Mockito* es uno de los frameworks más ampliamente utilizados en Java para la creación de objetos mock.
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
 
-![](img/img_01.png)
+#### Anotaciones básicas
 
-En la siguiente ventana elige `Spring Web`, `MySQL Driver` y `Spring Data JPA` como dependencias del proyecto:
+Mockito es un framework que permite trabajar de muchas formas, pero la más limpia y sencilla es definir e inicializar los objetos mock usando anotaciones. Para lo cual Mockito proporciona dos anotaciones básicas:
+
+- `@Mock`: Se usa para indicar a Mockito que debe crear un doble de prueba del objeto decorado con esta anotación.
+- `@Spy`: Indica que además de crear el doble de prueba, realizaremos algunas validaciones o verificaciones sobre los métodos que se ejecutaron sobre este objeto. Esto se hace para comprobar que el flujo que siguió la ejecución de nuestra prueba efectivamente es el que estamos esperando.
+- `@InjectMocks`: Toma todos los objetos Mock creados y los inyecta de forma automática en el objeto que usaremos para ejecutar las pruebas.
+
+
+#### Implementación
+
+Para este ejercicio modificaremos la calculadora que usamos en el ejemplo anterior para agregar un valor constante el cual obtendremos desde una base de datos usando un Data Access Object (DAO). Como no queremos probar la implementación del componente que se encarga de conectarse a la base de datos para obtener el valor, sino que la calculadora funciona correctamante usando ese valor, simularemos el objeto DAO usando un objeto Mock.
+
+Lo primero que debemos hacer es incluir las dependencias de JUnit y Mockito en nuestro proyecto. Esto lo hacemos colocando las siguientes línea en el archivo build.gradle, las cuales indican que debemos usar la dependencia de Junit jupiter solo en la etapa de pruebas:
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+```
+
+Como siguiente paso, definimos una interface del DAO que se encargará de leer el valor constante de la base de datos:
+
+```java
+
+public interface CalculadoraDao {
+    int findValorConstante();
+}
+
+```
+
+
+Ahora creamos una clase que contenga la siguiente lógica de sumas y restas. En este momento es igual a la `Calculadora` que desarrollamos antes:
+
+```java
+public class Calculadora{
+
+    public int suma(int a, int b) {
+        return a + b;
+    }
+
+    public int resta(int a, int b) {
+        return a - b;
+    }
+
+    public int multiplica(int a, int b) {
+        return a * b;
+    }
+}
+
+```
+
+Haremos una modificación a esta clase para que use el DAO en cada operación y sume el valor constante a cada operación:
+
+```java
+
+public class Calculadora {
+
+    private CalculadoraDao calculadoraDao;
+
+    public int suma(int a, int b) {
+        return a + b + calculadoraDao.findValorConstante();
+    }
+
+    public int resta(int a, int b) {
+        return a - b + calculadoraDao.findValorConstante();
+    }
+
+    public int multiplica(int a, int b) {
+        return a * b + calculadoraDao.findValorConstante();
+    }
+}
+
+```
+
+Ahora implementamos la clase de prueba. Como no tenemos aún la implementación del DAO crearemos un objeto mock que simule su funcionamiento. Con esto nos aseguramos de que la clase `Calculadora` funcione correctamente independientemente del funcionamiento del DAO.
+
+Para que JUnit sepa que Mockito deberá realizar algunas acciones en la prueba, decoramos la clase de prueba con la anotación `@ExtendWith(MockitoExtension.class)`:
+
+```java
+
+@ExtendWith(MockitoExtension.class)
+class CalculadoraTest {
+
+    @Mock
+    CalculadoraDao calculadoraDao;
+
+    @InjectMocks
+    Calculadora calculadora;
+
+
+    @BeforeEach
+    void setUp() {
+        given(calculadoraDao.findValorConstante()).willReturn(3);
+    }
+
+    @Test
+    @DisplayName("Prueba suma")
+    void sumaTest() {
+        int esperado = 8;
+        assertEquals(esperado, calculadora.suma(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba resta")
+    void restaTest() {
+        int esperado = 4;
+        assertEquals(esperado, calculadora.resta(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba multiplicación")
+    void multiplicaTest() {
+        int esperado = 9;
+        assertEquals(esperado, calculadora.multiplica(3, 2));
+    }
+}
+
+```
+
+
+Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
+
+![imagen](img/img_01.png)
+
+Debes ver el siguiente resultado en la consola del IDE:
 
 ![imagen](img/img_02.png)
-
-Presiona el botón "Finish".
-
-Dentro del nuevo proyecto crea los siguientes subpaquetes: `runners`, `model` y `persistence`.
-
-![](img/img_03.png)
-
-Dentro del paquete `model` crea una clase llamada `Etapa` con los siguientes atributos, junto con sus **getters** y **setters** :
-
-```java
-public class Etapa {
-    private Long etapaId;
-    private String nombre;
-    private Integer orden;
-}
-```
-
-Decora también la clase con las siguientes anotaciones de JPA del paquete `javax.persistence`:
-
-```java
-@Entity
-@Table(name = "ETAPAS")
-public class Etapa {
-
-}
-```
-
-Decora los atributos con las siguientes anotaciones de JPA:
-
-```java
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long etapaId;
-
-    @Column(nullable = false, length = 100)
-    private String nombre;
-
-    @Column(nullable = false, unique = true)
-    private Integer orden;
-```
-
-En el paquete `persistence` crea una interface llamada `EtapaRepository` que extienda de `JpaRepository`. Esta interface permanecerá sin métodos:
-
-```java
-public interface EtapaRepository extends JpaRepository<Etapa, Long> {
-
-}
-```
-
-En el paquete `runners` crea una nueva clase llamada `EtapasVentaRunner` que implemente la interface `CommandLineRunner`. Decora esta clase con la anotación `@Component` de Spring.
-
-```java
-@Component
-public class EtapasVentaRunner implements CommandLineRunner {
-
-    @Override
-    public void run(String... args) throws Exception {
-    
-    }
-}
-```
-
-Declara un atributo `final` de tipo `EtapaRepository` e inyecta esta dependencia usando inyección por constructor:
-
-```java
-@Component
-public class EtapasVentaRunner implements CommandLineRunner {
-
-    private final EtapaRepository etapaRepository;
-
-    @Autowired
-    public EtapasVentaRunner(EtapaRepository etapaRepository) {
-        this.etapaRepository = etapaRepository;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-
-    }
-}
-```
-
-Dentro del método `run` crea un grupo de objetos de tipo `Etapa` y guárdalos en la base de datos usando la instancia de `etapaRepository`. Usaremos un método auxiliar para crear las instancias de `Etapa`.
-
-```java
-    @Override
-    public void run(String... args) throws Exception {
-        Etapa etapa1 = creaEtapa("En espera", 0);
-        Etapa etapa2 = creaEtapa("Reunión de exploración", 1);
-        Etapa etapa3 = creaEtapa("Metas establecidas", 2);
-        Etapa etapa4 = creaEtapa("Plan de acción presentado.", 3);
-        Etapa etapa5 = creaEtapa("Contrato firmado", 4);
-        Etapa etapa6 = creaEtapa("Venta ganada", 5);
-        Etapa etapa7 = creaEtapa("Venta perdida", 6);
-
-        List<Etapa> etapas = Arrays.asList(etapa1, etapa2, etapa3, etapa4, etapa5, etapa6, etapa7);
-
-        etapaRepository.saveAll(etapas);
-    }
-
-    private Etapa creaEtapa(String nombre, Integer orden) {
-        Etapa etapa = new Etapa();
-        etapa.setNombre("En espera");
-        etapa.setOrden(orden);
-
-        return etapa;
-    }
-```
-
-Ejecuta la aplicación. No debería haber ningún error en la consola y la aplicación debe iniciar de forma correcta. 
-
-![](img/img_04.png)
-
-La base de datos debe estar inicializada con las `Etapas`:
-
-
-![](img/img_05.png)

@@ -1,88 +1,57 @@
-## Reto 01: Prueba de Exceptions
+## Reto 01: Persistencia de datos con Spring Data JPA
 
-### 🎯 OBJETIVO
+### OBJETIVO
 
-- Realizar una prueba unitaria que se encargue de validar que al momento de validar una funcionalidad, se lanza la excepción esperada.
+- Obtener información almacenada en la base de datos.
+- Hacer uso de las anotaciones básicas de JPA para indicar qué objeto debe ser tratado como una entidad de base de datos.
+- Aprender qué es un repositorio y los métodos por default que ofrece.
+
 
 ### DESARROLLO
 
-Al momento de mostrar una demo de nuestra calculadora al cliente, este quedó maravillado de su correcto funcionamiento y la ejecución correcta de todas las operaciones que nos pidió realizar durante la demo. Sin embargo, notó que al momento de realizar la implementación de la calculadora omitimos una operación que para él es esencial en sus operaciones diarias: la división. Tu reto será arreglar este terrible error que hemos cometido al entregar una aplicación incompleta al cliente.
-
-La división es una de las cuatro operaciones básicas de la aritmética que consiste en averiguar cuántas veces un número (divisor) está contenido en otro número (dividendo). Sin embargo, y a diferencia de las otras tres operaciones, la división presenta una complicación. Existe un valor que podemos asignar al divisor y que causa que la división explote al encontrar una singularidad espacial en un punto importante el cual podemos ver en la siguiente imagen:
-
-![imagen](img/img_01.png)
-
-
-En matemáticas, la división entre cero es una división en la que el divisor es igual a cero, y que no tiene un resultado bien definido. En aritmética y álgebra, es considerada una *indefinición*, y su mal uso puede dar lugar a aparentes paradojas matemáticas.
-
-Como queremos evitarle molestias a nuestro cliente y demostrarle que nuestra calculadora está preparada para todos los posibles valores que le ingresemos debes validar, en una prueba unitaria desarrollada usando JUnit, que si intentamos realizar una división entre cero se lanzará una excepción de tipo "IllegalArgumentException" con el mensaje mostrado a continuación:
+- Crea un nuevo proyecto usando Spring Initilizr y agrega las dependencias de `Spring Web`, `Spring Data JPA` y `MySQL Driver`.
+- Crea los subpaquetes: `controller`, `model` y `persistence`.
+- Crea una clase `Producto` y coloca las anotaciones correspondientes JPA.
+- Crea una clase `ProductoRepository` que extienda de `JpaRepository`.
+- Crea una clase `ProductoController` que haga uso de la interface anterior.
+- Implementa las funcionalidades de guardar un nuevo objeto Producto usando un método POST.
+- Implementa un método GET que reciba el ID de un objeto Producto y lea el objeto correspondiente de la base de datos. Si no se encuentra el objeto con el ID correspondiente se deberá regresar un error 404.
+- Realiza la prueba del reto usando Postman.
 
 
-```java
-    public float divide(float a, float b){
-
-        if(b == 0){
-            throw new IllegalArgumentException("No es posible dividir un valor entre 0");
-        }
-
-        return a / b;
-    }
-```
-
-¡Buena suerte!
-
-
-<details>
-  <summary>Solución</summary>
-
-Agregamos el método de prueba en la clase `CalculadoraTest` siguiendo la misma estructura que para el resto de los métodos:
+La clase `Producto` debe tener los siguientes atributos:
 
 ```java
-
-  @Test
-  @DisplayName("Prueba división")
-  void divideTest() {
-    
-  }
+    private Long id;
+    private String nombre;
+    private String categoria;
+    private float precio;
+    private String numeroRegistro;
+    private LocalDate fechaCreacion;
 ```
 
-La solución al reto puede hacerse de dos formas. En la primera debemos hacerlo en dos pasos. Primero, usamos el método `assertThrows` para indicar que esperamos que la invocación al método `divide` lance una excepción. Este método recibe dos parámetros, en el primero debemos indicar la clase de la excepción. En el segundo parámetro usaremos una función lambda para realizar la invocación al método que estamos probando. El llamado a `assertThrows` regresará la excepción lanzada por el método:
+Al realizar una petición para crear un nuevo recurso con el siguiente contenido en [http://localhost:8080/producto](http://localhost:8080/producto):
 
-```java
-  @Test
-  @DisplayName("Prueba división")
-  void divideTest() {
-  
-    Throwable exception = assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0));
-
- }
+```json
+{
+    "nombre": "Curso Java Backend",
+    "categoria": "Backend",
+    "precio": 1.15,
+    "numeroRegistro": "202-555-0125",
+    "fechaCreacion": "2025-11-21"
+}
 ```
 
-El segundo paso consiste en obtener el mensaje (el texto) de la excepción para comprobar que es el mismo texto que estamos esperando. Por lo que la prueba completa queda de la siguiente forma:
+Debes obtener la siguiente respuesta
 
-```java
-    @Test
-    @DisplayName("Prueba división")
-    void divideTest() {
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0));
+![](img/img_01.png)
 
-        assertEquals("No es posible dividir un valor entre 0", exception.getMessage());
-    }
-```
+Y al recuperar el nuevo custo creado, debes obtener la siguiente respuesta [http://localhost:8080/producto/1](http://localhost:8080/producto/1)
 
-La segunda forma de implementar la solución nos permite usar una versión sobrecargada de `assertThrows` que recibe como tercer parámetro el mensaje que estamos esperando obtener:
+![](img/img_02.png)
 
-```java
-    @Test
-    @DisplayName("Prueba división")
-    void divideTest() {
-        assertThrows(IllegalArgumentException.class, () -> calculadora.divide(100, 0), "No es posible dividir un valor entre 0");
-    }
-```
+---
 
-Al ejecutar la prueba anterior debes obtener el siguiente mensaje indicando que la prueba fue satisfactoria y que el cliente finalmente nos pagará por nuestra aplicación:
+### Solución
 
-![imagen](img/img_02.png)
-
-
-</details>
+¡Recuerda intentar resolver el reto antes de ver la solución! Una vez que lo hayas intentado puedes dirijirte al [proyecto con la solución](./solucion).

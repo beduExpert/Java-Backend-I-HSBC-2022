@@ -1,161 +1,105 @@
-## Ejemplo 01: Persistencia de datos con Spring Data JPA
+## Ejemplo 01: Pruebas unitarias con JUnit 
 
 ### OBJETIVO
 
-- Hacer uso de las anotaciones básicas de JPA para indicar qué objeto debe ser tratado como una entidad de base de datos.
-- Aprender qué es un repositorio y los métodos por default que ofrece.
-
+- Aprender a crear y ejecutar una prueba usando JUnit 
 
 ### DESARROLLO
 
-Antes de comenzar asegúrate de tener instado [MySQL Community Edition](https://www.mysql.com/products/community/) y de crear una base de datos llamada `bedu`.
+JUnit es uno de los frameworks de pruebas más populares en el ecosistema de la tecnología Java. La versión 5 de JUnit contiene muchas características útiles que nos ayudan a cumplir con el objetivo de desarrollar muchos tipos distintos de pruebas unitarias y de integración. 
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+#### Arquitectura
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+JUnit 5 está compuesto por una variedad de módulos diferentes divididos en tres módulos:
 
-![](img/img_01.png)
+- **JUnit Platform**: La plataforma es el módulo responsable de ejecutar las pruebas en la JVM. Define una serie de interfaces poderosas entre JUnit y sus clientes, como las herramientas de compilación (Gradle, Maven) o los IDEs.
+- **JUnit Jupiter**: Es el módulo que contiene los modelos y extensiones de JUnit. Este será el módulo que usaremos para escribir nuestras pruebas.
+- **JUnit Vintage**: Soporta la ejecución de pruebas basadas en JUnit 3 y 4 dentro de un entorno JUnit 5. Sirve mucho para cuando tenemos aplicaciones o código legado.
 
-En la siguiente ventana elige `Spring Web`, `MySQL Driver` y `Spring Data JPA` como dependencias del proyecto:
+#### Anotaciones básicas
+
+- `@Test`: Esta es la anotación que más usarás de JUnit. Indica que un método debe tratarse como un caso de una prueba unitaria. JUnit ejecuta todos los métodos habilitados que contengan esta anotación.
+- `@Disabled`: Indica que un caso de prueba particular debe ignorarse, y por lo tanto no se ejecutará.
+- `@BeforeEach`: Indica que el método anotado será ejecutado antes de cada uno de los métodos de prueba. Se usa cuando queremos inicializar y reinicializar información o configuración antes de cada prueba.
+- `@AfterEach`: Indica que el método anotado se ejecutará después de cada uno de los métodos de prueba. Se usa cuando queremos limpiar o liberar algún recurso después de cada prueba.
+- `@BeforeAll`: Indica que el método anotado se ejecutará antes de ejecutar los métodos de prueba. Se ejecuta una sola vez durante toda la prueba.
+- `@AfterAll`: Indica que el método anotado se ejecutará después de que se haya terminado la ejecución de todos los métodos de prueba. Se ejecuta una solo vez durante toda la prueba.
+
+
+#### Implementación
+
+Lo primero que debemos hacer es incluir la dependencia de JUnit en nuestro proyecto. Esto lo hacemos colocando la siguiente línea en el archivo `build.gradle`, las cuales indican que debemos usar la dependencia de Junit Jupiter solo en la etapa de pruebas:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.3.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+
+Ahora creamos una clase que contenga la siguiente lógica de sumas y restas.
+
+```java
+public class Calculadora{
+
+    public int suma(int a, int b) {
+        return a + b;
+    }
+
+    public int resta(int a, int b) {
+        return a - b;
+    }
+
+    public int multiplica(int a, int b) {
+        return a * b;
+    }
+}
+
+```
+
+Ahora implementamos la clase de prueba que nos permitirá verificar su funcionamiento:
+
+```java
+class CalculadoraTest {
+
+    private Calculadora calculadora = new Calculadora();
+
+    @Test
+    @DisplayName("Prueba suma")
+    void sumaTest() {
+        int esperado = 5;
+
+        assertEquals(esperado, calculadora.suma(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba resta")
+    void restaTest() {
+        int esperado = 1;
+
+        assertEquals(esperado, calculadora.resta(3, 2));
+    }
+
+    @Test
+    @DisplayName("Prueba multiplicación")
+    void multiplicaTest() {
+        int esperado = 6;
+
+        assertEquals(esperado, calculadora.multiplica(3, 2));
+    }
+}
+```
+
+
+Ejecuta la prueba haciendo clic derecho sobre el editor de código y seleccionando la opción `Run CalculadoraTest` o haciendo clic sobre las dos flechas verdes que aparecen junto al nombre de la clase:
+
+![imagen](img/img_01.png)
+
+Debes ver el siguiente resultado en la consola del IDE:
 
 ![imagen](img/img_02.png)
-
-Presiona el botón "Finish".
-
-Dentro del nuevo proyecto crea los siguientes subpaquetes: `controller`, `model` y `persistence`.
-
-![](img/img_03.png)
-
-Dentro del paquete `model` crea una clase llamada `Cliente` con los siguientes atributos, y agrega sus correspondientes métodos **getter** y **setter**:
-
-```java
-public class Cliente {
-    private Long id;
-    private String nombre;
-    private String correoContacto;
-    private int numeroEmpleados;
-    private String direccion;
-}
-```
-
-Decora la clase con las anotaciones `@Entity` y `@Table` del paquete `javax.persistence`:
-
-```java
-@Entity
-@Table(name = "CLIENTE")
-public class Cliente {
-
-}
-```
-
-Decora los atributos `id`, `correoContacto` y `numeroEmpleados` con las siguientes anotaciones (`nombre` y `direccion` permanecen igual)
-
-```java
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String nombre;
-
-    @Column(name = "correo_contacto", length = 30)
-    private String correoContacto;
-
-    @Column(name = "numero_empleados")
-    private int numeroEmpleados;
-
-    private String direccion;
-```
-
-En el paquete persistence crea una interface llamada `ClienteRepository` que extienda de `JpaRepository`. Esta interface permanecerá sin métodos:
-
-```java
-public interface ClienteRepository  extends JpaRepository<Cliente, Long> {
-
-}
-```
-
-En el paquete `controller` crea una nueva clase llamada `ClienteController` y decórala con las anotaciones de Spring MVC para indicar que esta clase es un controlador web.
-
-```java
-@RestController
-@RequestMapping("/cliente")
-public class ClienteController {
-
-}
-```
-
-Agrega un atributo `final` de tipo `ClienteRepository`:
-
-```java
-  private final ClienteRepository clienteRepository;
-```
-
-Agrega un constructor a `ClienteController` e inyecta la la instancia de `ClienteRepository` usando la inyección de construcción:
-
-```java
-    @Autowired
-    public ClienteController(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
-    }
-```
-
-Crea un método **POST** que reciba un objeto `Cliente` como parámetro y regrese un código de respuesta `201`:
-
-```java
-    @PostMapping
-    public ResponseEntity<Void> creaCliente(@RequestBody Cliente cliente){
-        return ResponseEntity.created(URI.create("")).build();
-    }
-```
-
-Dentro del método `creaCliente` usa el objeto `clienteRepository` para guardar el objeto `cliente` en base de datos. Usa el `id` del objeto almacenado para regresarlo en la respuesta del método.
-
-```java
-    @PostMapping
-    public ResponseEntity<Void> creaCliente(@RequestBody Cliente cliente){
-
-        Cliente clienteDB = clienteRepository.save(cliente);
-
-        return ResponseEntity.created(URI.create(clienteDB.getId().toString())).build();
-    }
-```
-
-En el directorio `resources` busca o crea el archivo `application.properties`.
-
-![](img/img_04.png)
-
-Coloca el siguiente contenido en el archivo (personaliza el contenido en caso de ser necesario):
-
-```groovy
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.hibernate.generate_statistics=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.datasource.url=jdbc:mysql://localhost:3306/bedu?serverTimezone=UTC
-spring.datasource.username=<usuario>
-spring.datasource.password=<password>
-```
-
-Ejecuta la aplicación y envía la siguinte petición desde Postman:
-
-```json
-{
-    "nombre": "BeduORG",
-    "correoContacto": "contacto@bedu.org",
-    "numeroEmpleados": "20",
-    "direccion": "direccion"
-}
-```
-
-debes tener la siguiente respuesta en la consola de Postman:
-
-![](img/img_05.png)
-
-
-Revisa la base de datos, la tabla `CLIENTE` debe haberse creado de forma automática y debe tener almacenado el registro con los datos enviados desde Postman:
-
-![](img/img_06.png)
