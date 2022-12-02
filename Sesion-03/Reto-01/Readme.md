@@ -9,7 +9,7 @@
 
 La ventaja que nos ofrece un Entorno de desarrollo integrado, IDE por sus siglas en inglés, como IntelliJ Idea es que combina en una sola herramienta todas las opciones que necesitamos para la creación de proyectos de cualquier framework que soporte el lenguaje de programación Java. Dentro de esta enorme lista se encuentra Spring Boot que, como viste en el primer ejercicio, permite el desarrollo de aplicaciones web de una forma muy sencilla.
 
-Spring Initlizr es un sitio que nos permite la creación de un proyecto Spring Boot usando Maven o Gradle como herramientas de construcción del proyecto. Además de que permite la selección de la dependencias del mismo y se encarga de configurarlas para que en cuestión de segundos podamos tener el esqueleto funcional de una aplicación.
+Spring Initlizr es un sitio que nos permite la creación de un proyecto Spring Boot usando Maven como herramientas de construcción del proyecto. Además de que permite la selección de la dependencias del mismo y se encarga de configurarlas para que en cuestión de segundos podamos tener el esqueleto funcional de una aplicación.
 
 En este reto tendrás que crear una aplicación sencilla desde el entorno de desarrollo integrado. No es necesario agregar ninguna funcionalidad inicial, ya que lo que queremos comprobar es que la aplicación está bien configurada y puede ejecutarse de forma exitosa. Para comprobar esto, deberas ver una pantalla como la siguiente al momento de ingresar a la URL: http://localhost:8080
 
@@ -47,13 +47,7 @@ Presiona el botón `Finish`. Con esto se creará un nuevo proyecto que tiene la 
 
 En esta sesión no modificaremos nada del código que el IDE ha creado de forma automática, eso lo dejaremos para la siguiente sesión.
 
-El siguiente paso es compilar el código de la aplicación. Para hacerlo ve al panel llamado **Gradle** que se encuentra del lado derecho del IDE. Es posible que este panel se encuentre minimizado, como se muestra en la siguiente imagen:
-
-![imagen](img/img_06.png)
-
-Para abrirlo solo haz clic sobre el nombre del panel, con esto debe desplegarse como se muestra en la siguiente imagen:
-
-![imagen](img/img_07.png)
+El siguiente paso es compilar el código de la aplicación. 
 
 Ahora, para compilar el código de  aplicación y generar el archivo `jar` que permite la ejecución de esta hay que  doble clic sobre el elemento `bootJar` (con lo que se le indica a Maven que este es el último paso del ciclo de vida de construcción de la aplicación que debe ejecutar).
 
