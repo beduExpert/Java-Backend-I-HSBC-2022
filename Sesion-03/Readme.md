@@ -62,7 +62,7 @@ Uno de los puntos más importantes de REST es el uso de los métodos HTTP de for
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
 
-- [**`POSTWORK SESIÓN 4`**](./Postwork/)
+- [**`POSTWORK SESIÓN 3`**](./Postwork/)
 
 <br/>
 

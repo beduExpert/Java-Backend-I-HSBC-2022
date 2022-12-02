@@ -63,7 +63,7 @@ En algunas ocasiones tendremos que modificar algunos valores de los *Beans* de l
 
 Encuentra las indicaciones y consejos para reflejar los avances de tu proyecto de este módulo.
 
-- [**`POSTWORK SESIÓN 5`**](./Postwork/)
+- [**`POSTWORK SESIÓN 4`**](./Postwork/)
 
 <br/>
 
