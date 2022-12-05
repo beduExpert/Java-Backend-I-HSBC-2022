@@ -2,7 +2,7 @@
 
 ### 🎯 OBJETIVO
 
-- EExtender el programa para utilizar el IoC de Spring Boot
+- Extender el programa para utilizar el IoC de Spring Boot
 
 ### DESARROLLO
 
