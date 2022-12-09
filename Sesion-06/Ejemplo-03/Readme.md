@@ -1,80 +1,41 @@
-## Ejemplo 03: Carga de archivos
+## Ejemplo 03: Diferencia entre AMQP y JMS
 
 ### OBJETIVO
 
-- Cargar un archivo al servidor a través de una petición HTTP
+- Entender las diferencias entre AMQP y JMS
 
 
 ### DESARROLLO
 
-Crea un proyecto usando Spring Initializr desde el IDE IntelliJ con las siguientes opciones:
+1. Protocolo de cola de mensajes avanzado (AMQP): 
 
-  - Gradle Proyect (no te preocupes, no es necesario que tengas Gradle instalado).
-  - Lenguaje: **Java**.
-  - Versión de Spring Boot, la versión estable más reciente
-  - Grupo, artefacto y nombre del proyecto.
-  - Forma de empaquetar la aplicación: **jar**.
-  - Versión de Java: **11** o superior.
+Es un protocolo que se utiliza para la comunicación entre aplicaciones. Es un protocolo ligero que soporta las aplicaciones para su transferencia de datos. Este protocolo se utiliza por su escalabilidad y modularidad con las tecnologías. 
 
-![](img/img_01.png)
+2. Servicio de mensajes de Java (JMS): 
 
-En la siguiente ventana elige Spring Web como la única dependencia del proyecto:
+Es una interfaz de programa de aplicación (API) que admite la comunicación de la computadora en una red. Es una poderosa API utilizada para recibir los mensajes generados durante la comunicación. 
 
-![imagen](img/img_02.png)
+#### AMQP
 
-Presiona el botón "Finish".
+- Protocolo avanzado de colas de mensajes.
+- Fue desarrollado por JPMorgan Chase.
+- Todos los clientes compatibles con AMQP pueden comunicarse entre sí.
+- Utiliza Direct, Fanout, Topic y Headers.
+- AMQP es un protocolo.
+- AMQP solo usa y admite tipos de datos binarios.
+- La seguridad es compatible con la capa de seguridad y autenticación simple (SASL).
+- Son los productores los que envían el mensaje y luego se pone en cola.
+- Es flexible con muchas tecnologías.
 
-Para este ejemplo solo necesitamos un paquete `controller`. Dentro de este paquete crea una clase llamada `DocumentoController`. 
+#### JMS 
 
-
-```java
-@RestController
-@RequestMapping("/api/v1/documento")
-public class DocumentoController {
-    
-}
-```
-
-Para recibir un archivo cargado a través de una petición HTTP, debe hacer lo siguiente: 
-
-```java
-
-   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Object cargaArchivo(@RequestPart MultipartFile file) {
-    String fileName = file.getOriginalFilename();
-    InputStream inputStream = file.getInputStream();
-    String contentType = file.getContentType();
-    ...
-}
-
-```
-
-Hay que tener en cuenta que el nombre del objeto `MultipartFile` decorado con `@RequestPart` debe coincidir con el nombre de la parte en la petición. Veremos cómo hacer esto desde Postman en unos momentos. 
-
-
-También es posible hacer la carga de múltiples archivos al mismo tiempo declarando el objeto `MultipartFile` como un arreglo, de la siguiente forma:
-
-
-```java
-  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Object uploadFile(@RequestPart MultipartFile[] files) {
-  
-    for (file : files) {
-        String fileName = file.getOriginalFilename();
-        InputStream inputStream = file.getInputStream();
-        String contentType = file.getContentType();
-        ...
-    }
-}
-```
-
-
-Ahora haremos una modificación a la forma en la que hacemos la petición desde Postman. Los cambios correspondientes puedes verlos en esta imagen:
-
-![](img/img_05.png)
-
-
-Ahora sí, ejecuta tu aplicación. Debes ver la siguiente respuesta en Postman:
-
-![](img/img_06.png)
+- Servicio de mensajes de Java.
+- Fue desarrollado por Sun Microsystems.
+- La aplicación debe utilizar la API de JMS para comunicarse.
+- Utiliza Publicación/Suscripción y P2P (Punto a Punto).
+- JMS es una API estándar.
+- JMS admite cinco tipos de datos denominados MapMessage, ObjectMessage, Text message, StreamMessage y BytesMessage.
+- No se proporciona seguridad y depende del proveedor de JMS.
+- Es manejado por los productores y envía directamente al tema.
+- No es una tecnología flexible, ya que está hecha solo para Java.
 
