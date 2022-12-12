@@ -7,6 +7,8 @@ public class Usuario {
     private String correoElectronico;
     private String password;
 
+    private Direccion direccion;
+
     public String getNombre() {
         return nombre;
     }
@@ -45,5 +47,13 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
     }
 }

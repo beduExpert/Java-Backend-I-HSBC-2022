@@ -1,44 +1,41 @@
-## Ejemplo 02: Diferencia entre P2P y Publish/subscribe
+## Ejemplo 03: Diferencia entre AMQP y JMS
 
 ### OBJETIVO
 
-- Entender las diferencias entre el modelo Punto a Punto y Publish/Suscribe
+- Entender las diferencias entre AMQP y JMS
 
 
 ### DESARROLLO
 
-El modelo de mensajería punto a punto y el modelo de mensajería de publicación y suscripción son los dos tipos de módulos/tipos/dominios de mensajería admitidos por Java Message Service (JMS) .
+1. Protocolo de cola de mensajes avanzado (AMQP): 
 
-Estos dos son modelos de programación que admiten mensajería asincrónica entre sistemas heterogéneos.
+Es un protocolo que se utiliza para la comunicación entre aplicaciones. Es un protocolo ligero que soporta las aplicaciones para su transferencia de datos. Este protocolo se utiliza por su escalabilidad y modularidad con las tecnologías. 
 
-Hay algunos términos importantes que nos ayudarán a comprender mejor la diferencia entre los dos tipos de modelos de mensajería:
+2. Servicio de mensajes de Java (JMS): 
 
-- El destino JMS es un área de ensayo que actúa como origen de los mensajes consumidos por un cliente y como destino/objetivo para los mensajes producidos.
-- El productor JMS es un cliente JMS que envía un mensaje.
-- El consumidor JMS es un cliente JMS que recibe un mensaje.
-- Un cliente JMS puede ser tanto un productor como un consumidor de mensajes.
-- La dependencia del tiempo simplemente significa que si un productor ha publicado algunos mensajes sobre un tema al que un consumidor no se ha suscrito, entonces el consumidor no recibirá los mensajes sobre ese tema.
+Es una interfaz de programa de aplicación (API) que admite la comunicación de la computadora en una red. Es una poderosa API utilizada para recibir los mensajes generados durante la comunicación. 
 
-Veamos la diferencia entre estos dos tipos de modelos de mensajería:
+#### AMQP
 
-#### P2P
-- Aquí el destino JMS es la cola.
-- Aquí el productor JMS es el remitente.
-- Aquí el consumidor JMS es el receptor.
-- Aquí el mensaje lo recibe solo 1 consumidor JMS.
-- Aquí, el consumidor JMS envía un reconocimiento al productor al recibir el mensaje.
-- Aquí existe una dependencia del tiempo para que el receptor reciba el mensaje.
-- Este modelo está basado en extracción, lo que significa que el receptor es responsable de solicitar que un remitente envíe nuevos mensajes.
-- por ej. enviar un fax/mensaje de voz.
+- Protocolo avanzado de colas de mensajes.
+- Fue desarrollado por JPMorgan Chase.
+- Todos los clientes compatibles con AMQP pueden comunicarse entre sí.
+- Utiliza Direct, Fanout, Topic y Headers.
+- AMQP es un protocolo.
+- AMQP solo usa y admite tipos de datos binarios.
+- La seguridad es compatible con la capa de seguridad y autenticación simple (SASL).
+- Son los productores los que envían el mensaje y luego se pone en cola.
+- Es flexible con muchas tecnologías.
 
-#### Pub Sub
+#### JMS 
 
-- Mientras que JMS Destination en Pub sub es un tema.
-- Mientras que el productor de JMS en Pub sub es un editor.
-- Mientras que el consumidor de JMS en Pub sub es un suscriptor.
-- Mientras está en Pub sub, varios consumidores de JMS pueden recibir un mensaje.
-- Mientras está en Pub sub, el consumidor de JMS no envía ningún reconocimiento al recibir el mensaje.
-- Mientras que en Pub sub, no existe una dependencia de tiempo establecida entre el productor y el consumidor.
-- Si bien este modelo se basa en notificaciones automáticas, lo que significa que los mensajes se entregan automáticamente a los consumidores sin que tengan que solicitar nuevos mensajes.
-- por ej. periódicos
+- Servicio de mensajes de Java.
+- Fue desarrollado por Sun Microsystems.
+- La aplicación debe utilizar la API de JMS para comunicarse.
+- Utiliza Publicación/Suscripción y P2P (Punto a Punto).
+- JMS es una API estándar.
+- JMS admite cinco tipos de datos denominados MapMessage, ObjectMessage, Text message, StreamMessage y BytesMessage.
+- No se proporciona seguridad y depende del proveedor de JMS.
+- Es manejado por los productores y envía directamente al tema.
+- No es una tecnología flexible, ya que está hecha solo para Java.
 
